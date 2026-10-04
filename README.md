@@ -27,6 +27,10 @@ L'app utilise des URL propres : l'hébergeur doit renvoyer `index.html` pour tou
 
 Pour tester la PWA en local comme en production : `npm run serve:web` puis http://localhost:4300.
 
+#### GitHub Pages
+
+Le workflow `.github/workflows/pages.yml` construit et déploie le site à chaque push sur `main`, à l'adresse https://mikvix.github.io/batu-tempo/. Il construit avec `--base-href /batu-tempo/` et copie `index.html` en `404.html` pour que les routes profondes fonctionnent. À faire une fois dans les réglages du dépôt : Settings → Pages → Source = « GitHub Actions ». Sur un compte gratuit, GitHub Pages n'est disponible que pour un dépôt public.
+
 ### Android
 
 Prérequis : Android Studio (ou au moins le SDK), `ANDROID_HOME` défini, un **JDK 21** (Capacitor 8 l'exige ; celui embarqué dans Android Studio convient : `JAVA_HOME = C:\Program Files\Android\Android Studio\jbr`), un téléphone en débogage USB ou un émulateur.
