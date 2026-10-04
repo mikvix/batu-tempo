@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Instrument — Caixa</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F4F1EA;text-decoration:none}a:hover{color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 52px 20px 0; display: flex; align-items: center; gap: 12px">
+    <a href="Player.dc.html" aria-label="Retour au lecteur" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #35303D; background: #1E1B22; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0">
+      <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em">Caixa</div>
+      <div style="font-size: 13px; color: #A8A2B0">Samba Reggae · Groove de base</div>
+    </div>
+    <button style="height: 36px; padding: 0 12px; border-radius: 12px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer; flex: 0 0 auto">
+      Changer
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+    </button>
+  </div>
+
+  <div style="margin: 18px 20px 0; padding: 18px 16px 16px; border-radius: 20px; background: #1E1B22; border: 1px solid #2A2630; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #A8A2B0">Pattern · 1 mesure</div>
+      <div style="font-size: 12px; color: #A8A2B0"><span style="color: #F2B134; font-weight: 700">■</span> accent &nbsp; <span style="color: #7A6F4A; font-weight: 700">■</span> ghost</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; gap: 10px">
+        <sc-for list="{{groups}}" as="g" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 0">
+            <div style="font-size: 12px; font-weight: 700; color: #A8A2B0">{{g.beat}}</div>
+            <div style="display: flex; gap: 4px">
+              <sc-for list="{{g.cells}}" as="c" hint-placeholder-count="4">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1 1 0">
+                  <div style="{{c.accentStyle}}">›</div>
+                  <div style="{{c.style}}"></div>
+                  <div style="{{c.handStyle}}">{{c.hand}}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 4px; border-top: 1px solid #2A2630">
+      <div style="font-size: 12px; color: #A8A2B0">D = main droite · G = main gauche</div>
+      <button style="height: 30px; padding: 0 10px; border-radius: 9px; border: 1px solid #35303D; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer">Inverser</button>
+    </div>
+  </div>
+
+  <div style="padding: 22px 20px 0; display: flex; flex-direction: column; gap: 10px">
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #A8A2B0">Vitesse d'apprentissage</div>
+    <div style="display: flex; gap: 8px">
+      <button style="flex: 1 1 0; height: 44px; border-radius: 12px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer">50 %</button>
+      <button aria-pressed="true" style="flex: 1 1 0; height: 44px; border-radius: 12px; border: 1px solid #F2B134; background: #F2B134; color: #1A1500; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer">70 %</button>
+      <button style="flex: 1 1 0; height: 44px; border-radius: 12px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer">85 %</button>
+      <button style="flex: 1 1 0; height: 44px; border-radius: 12px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer">100 %</button>
+    </div>
+    <div style="font-size: 13px; color: #A8A2B0">Soit 67 BPM au lieu de 96 · passe au palier suivant après 4 boucles propres</div>
+  </div>
+
+  <div style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 8px">
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #A8A2B0">Écoute</div>
+    <div style="display: flex; flex-direction: column; border-radius: 16px; background: #1E1B22; border: 1px solid #2A2630; overflow: hidden">
+      <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #2A2630; cursor: pointer">
+        <span style="font-size: 14px; font-weight: 600">Caixa seule</span>
+        <input type="checkbox" aria-label="Caixa seule" style="width: 20px; height: 20px; accent-color: #F2B134">
+      </label>
+      <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #2A2630; cursor: pointer">
+        <span style="font-size: 14px; font-weight: 600">Groupe en fond, caixa en avant</span>
+        <input type="checkbox" checked aria-label="Groupe en fond" style="width: 20px; height: 20px; accent-color: #F2B134">
+      </label>
+      <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; cursor: pointer">
+        <span style="font-size: 14px; font-weight: 600">Compter à voix haute</span>
+        <input type="checkbox" aria-label="Compter à voix haute" style="width: 20px; height: 20px; accent-color: #F2B134">
+      </label>
+    </div>
+  </div>
+
+  <div style="padding: 20px 20px 0; display: flex; flex-direction: column; gap: 8px">
+    <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #A8A2B0">Variations de la caixa</div>
+    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px">
+      <button aria-pressed="true" style="height: 36px; padding: 0 14px; border-radius: 11px; border: 1px solid #F2B134; background: #2A2630; color: #F2B134; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Groove de base</button>
+      <button style="height: 36px; padding: 0 14px; border-radius: 11px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Virada</button>
+      <button style="height: 36px; padding: 0 14px; border-radius: 11px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Break caixa</button>
+      <button style="height: 36px; padding: 0 14px; border-radius: 11px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Entrée</button>
+    </div>
+  </div>
+
+  <div style="flex: 1 1 auto"></div>
+
+  <div style="padding: 0 20px 28px; display: flex; align-items: center; gap: 12px">
+    <button style="height: 56px; padding: 0 16px; border-radius: 16px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1 1 0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>
+      Boucle · 2 mesures
+    </button>
+    <button aria-label="Lancer la caixa" style="width: 76px; height: 76px; border-radius: 50%; border: none; background: #F2B134; color: #1A1500; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto; box-shadow: 0 10px 30px rgba(242,177,52,0.35)">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+    </button>
+    <a href="Exercices.dc.html" style="height: 56px; padding: 0 16px; border-radius: 16px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex: 1 1 0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+      Exercices caixa
+    </a>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var hands = ['D','G','D','G','D','G','D','G','D','G','D','G','D','G','D','G'];
+    var accents = [0, 3, 6, 10, 12];
+    var groups = [];
+    for (var g = 0; g < 4; g++) {
+      var cells = [];
+      for (var k = 0; k < 4; k++) {
+        var i = g * 4 + k;
+        var acc = accents.indexOf(i) >= 0;
+        cells.push({
+          hand: hands[i],
+          style: 'width: 100%; height: 44px; border-radius: 8px; background: ' + (acc ? '#F2B134' : '#4A4230') + ';',
+          accentStyle: 'height: 14px; font-size: 16px; line-height: 14px; font-weight: 800; color: ' + (acc ? '#F2B134' : 'transparent') + '; transform: rotate(90deg);',
+          handStyle: 'font-size: 11px; font-weight: 700; color: ' + (acc ? '#F4F1EA' : '#A8A2B0') + ';'
+        });
+      }
+      groups.push({ beat: String(g + 1), cells: cells });
+    }
+    return { groups: groups };
+  }
+}
+</script>
+</body>
+</html>

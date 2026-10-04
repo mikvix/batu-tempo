@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Exercices</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F4F1EA;text-decoration:none}a:hover{color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <h1 style="margin: 0; font-family: Syne, sans-serif; font-weight: 800; font-size: 32px; line-height: 1.05; letter-spacing: -0.02em">Exercices</h1>
+      <button style="height: 40px; padding: 0 12px; border-radius: 12px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #F2B134"></span>
+        Samba Reggae
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+      </button>
+    </div>
+    <div style="display: flex; gap: 8px; overflow-x: auto">
+      <button aria-pressed="true" style="height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #F2B134; background: #F2B134; color: #1A1500; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Tous</button>
+      <button style="height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Breaks</button>
+      <button style="height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Reprises</button>
+      <button style="height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Tempo</button>
+      <button style="height: 34px; padding: 0 14px; border-radius: 10px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; flex: 0 0 auto">Appels</button>
+    </div>
+  </div>
+
+  <div style="padding: 18px 20px 0; display: flex; flex-direction: column; gap: 10px; flex: 1 1 auto">
+
+    <a href="Break.dc.html" style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 20px; background: #1E1B22; border: 1px solid #F2B134">
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="height: 22px; padding: 0 8px; border-radius: 7px; background: #FF7A5C; color: #1A0E0A; font-size: 11px; font-weight: 700; display: flex; align-items: center">BREAK</span>
+          <span style="height: 22px; padding: 0 8px; border-radius: 7px; background: #3ECFA6; color: #06211A; font-size: 11px; font-weight: 700; display: flex; align-items: center">REPRISE</span>
+        </div>
+        <div style="display: flex; gap: 3px"><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #3A3542"></span></div>
+      </div>
+      <div style="font-family: Syne, sans-serif; font-weight: 700; font-size: 18px">Break &amp; reprise</div>
+      <div style="font-size: 13px; color: #A8A2B0; line-height: 1.4">Le groupe joue 8 mesures, s'arrête sur un break de 2 mesures, puis reprend. Objectif : rentrer pile sur le 1.</div>
+      <div style="display: flex; align-items: center; gap: 2px; height: 8px">
+        <span style="flex: 8 1 0; height: 8px; border-radius: 4px 0 0 4px; background: #F2B134"></span>
+        <span style="flex: 2 1 0; height: 8px; background: #FF7A5C"></span>
+        <span style="flex: 8 1 0; height: 8px; border-radius: 0 4px 4px 0; background: #3ECFA6"></span>
+      </div>
+    </a>
+
+    <a href="Break.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: #1E1B22; border: 1px solid #2A2630">
+      <div style="width: 44px; height: 44px; border-radius: 14px; background: #2A2630; color: #3ECFA6; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"></path><path d="M3 3l18 18"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0">
+        <div style="font-weight: 700; font-size: 15px">Reprise à l'aveugle</div>
+        <div style="font-size: 13px; color: #A8A2B0; line-height: 1.35">Le son coupe 2 mesures, tu continues seul. Le groupe revient : es-tu encore en place ?</div>
+      </div>
+      <div style="display: flex; gap: 3px; flex: 0 0 auto"><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span></div>
+    </a>
+
+    <a href="Break.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: #1E1B22; border: 1px solid #2A2630">
+      <div style="width: 44px; height: 44px; border-radius: 14px; background: #2A2630; color: #F2B134; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"></path><path d="M12 6V3"></path><path d="M4 14v4h4v-4zM16 14v4h4v-4z"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0">
+        <div style="font-weight: 700; font-size: 15px">Appel du repique</div>
+        <div style="font-size: 13px; color: #A8A2B0; line-height: 1.35">Reconnaître l'appel et répondre au bon moment avec ton instrument.</div>
+      </div>
+      <div style="display: flex; gap: 3px; flex: 0 0 auto"><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #3A3542"></span></div>
+    </a>
+
+    <a href="Break.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: #1E1B22; border: 1px solid #2A2630">
+      <div style="width: 44px; height: 44px; border-radius: 14px; background: #2A2630; color: #7FA8FF; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 5-7 4 3"></path></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0">
+        <div style="font-weight: 700; font-size: 15px">Tempo qui bouge</div>
+        <div style="font-size: 13px; color: #A8A2B0; line-height: 1.35">Accélérations et ralentis progressifs, de 88 à 110 BPM, à suivre sans décrocher.</div>
+      </div>
+      <div style="display: flex; gap: 3px; flex: 0 0 auto"><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #3A3542"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #3A3542"></span></div>
+    </a>
+
+    <a href="Break.dc.html" style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: #1E1B22; border: 1px solid #2A2630">
+      <div style="width: 44px; height: 44px; border-radius: 14px; background: #2A2630; color: #FF7A5C; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; font-family: Syne, sans-serif; font-weight: 800; font-size: 15px">4·1</div>
+      <div style="display: flex; flex-direction: column; gap: 3px; flex: 1 1 auto; min-width: 0">
+        <div style="font-weight: 700; font-size: 15px">Compte à rebours</div>
+        <div style="font-size: 13px; color: #A8A2B0; line-height: 1.35">Le break est annoncé 4, 3, 2, 1. On entre tous ensemble sur le 1.</div>
+      </div>
+      <div style="display: flex; gap: 3px; flex: 0 0 auto"><span style="width: 7px; height: 7px; border-radius: 50%; background: #F2B134"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #3A3542"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #3A3542"></span></div>
+    </a>
+
+  </div>
+
+  <nav aria-label="Navigation principale" style="display: flex; justify-content: space-around; align-items: flex-start; padding: 12px 8px 26px; border-top: 1px solid #2A2630; background: #17151A">
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; padding: 6px 0; color: #A8A2B0; font-size: 11px; font-weight: 600">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h2l2-6 3 12 3-9 2 5 2-2h4"></path></svg>
+      Rythmes
+    </a>
+    <a href="Exercices.dc.html" aria-current="page" style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; padding: 6px 0; color: #F2B134; font-size: 11px; font-weight: 600">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.2" fill="currentColor"></circle></svg>
+      Exercices
+    </a>
+    <a href="Player.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; padding: 6px 0; color: #A8A2B0; font-size: 11px; font-weight: 600">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l3 18H6z"></path><path d="M12 15l5-9"></path></svg>
+      Métronome
+    </a>
+    <a href="Main.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; padding: 6px 0; color: #A8A2B0; font-size: 11px; font-weight: 600">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>
+      Profil
+    </a>
+  </nav>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

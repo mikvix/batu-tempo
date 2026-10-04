@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lecteur — Samba Reggae</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F4F1EA;text-decoration:none}a:hover{color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 52px 20px 0; display: flex; align-items: center; gap: 12px">
+    <a href="Main.dc.html" aria-label="Retour aux rythmes" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #35303D; background: #1E1B22; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0">
+      <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em">Samba Reggae</div>
+      <div style="font-size: 13px; color: #A8A2B0">Salvador · Groove de base</div>
+    </div>
+    <a href="Exercices.dc.html" style="height: 36px; padding: 0 12px; border-radius: 12px; background: #2A2630; color: #F2B134; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; flex: 0 0 auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle></svg>
+      Exercices
+    </a>
+  </div>
+
+  <div style="margin: 18px 20px 0; padding: 16px 18px; border-radius: 20px; background: #1E1B22; border: 1px solid #2A2630; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #A8A2B0">Tempo</div>
+      <button style="height: 32px; padding: 0 12px; border-radius: 10px; border: 1px solid #35303D; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer">Tap tempo</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 14px">
+      <button aria-label="Ralentir" onClick="{{slower}}" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid #35303D; background: #141216; color: #F4F1EA; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"></path></svg>
+      </button>
+      <div style="flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; gap: 2px">
+        <div style="display: flex; align-items: baseline; gap: 6px">
+          <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 52px; line-height: 1; letter-spacing: -0.03em; color: #F2B134">{{bpm}}</div>
+          <div style="font-size: 14px; font-weight: 600; color: #A8A2B0">BPM</div>
+        </div>
+      </div>
+      <button aria-label="Accélérer" onClick="{{faster}}" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid #35303D; background: #141216; color: #F4F1EA; display: flex; align-items: center; justify-content: center; cursor: pointer">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+      </button>
+    </div>
+    <div style="height: 6px; border-radius: 3px; background: #2A2630; position: relative">
+      <div style="{{sliderStyle}}"></div>
+    </div>
+    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #A8A2B0"><span>60</span><span>Tempo du groupe : 96</span><span>180</span></div>
+  </div>
+
+  <div style="padding: 22px 20px 0; display: flex; align-items: center; justify-content: space-between">
+    <h2 style="margin: 0; font-family: Syne, sans-serif; font-weight: 700; font-size: 17px">Instruments</h2>
+    <div style="display: flex; gap: 6px">
+      <button style="height: 30px; padding: 0 10px; border-radius: 9px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer">Tous</button>
+      <button onClick="{{soloMine}}" style="height: 30px; padding: 0 10px; border-radius: 9px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer">Sans le mien</button>
+    </div>
+  </div>
+
+  <div style="padding: 12px 20px 0; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 2px; padding-left: 136px">
+      <sc-for list="{{ruler}}" as="tick" hint-placeholder-count="16">
+        <div style="{{tick.style}}">{{tick.label}}</div>
+      </sc-for>
+    </div>
+    <sc-for list="{{rows}}" as="row" hint-placeholder-count="6">
+      <div style="{{row.style}}">
+        <div style="width: 78px; flex: 0 0 auto; display: flex; flex-direction: column; gap: 1px">
+          <div style="font-size: 13px; font-weight: 700; line-height: 1.1">{{row.name}}</div>
+          <div style="font-size: 10px; color: #A8A2B0; line-height: 1.1">{{row.role}}</div>
+        </div>
+        <button aria-label="Couper {{row.name}}" onClick="{{row.toggle}}" style="{{row.btnStyle}}">
+          <sc-if value="{{row.muted}}" hint-placeholder-val="{{false}}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"></path><path d="m22 9-6 6M16 9l6 6"></path></svg>
+          </sc-if>
+          <sc-if value="{{row.audible}}" hint-placeholder-val="{{true}}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
+          </sc-if>
+        </button>
+        <div style="display: flex; align-items: center; gap: 2px; flex: 1 1 auto">
+          <sc-for list="{{row.cells}}" as="cell" hint-placeholder-count="16">
+            <div style="{{cell.style}}"></div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <a href="Instrument.dc.html" style="margin: 18px 20px 0; padding: 12px 14px; border-radius: 16px; background: #1E1B22; border: 1px solid #2A2630; display: flex; align-items: center; gap: 12px">
+    <div style="width: 38px; height: 38px; border-radius: 12px; background: #F2B134; color: #1A1500; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; font-size: 12px; flex: 0 0 auto">CX</div>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto">
+      <div style="font-size: 12px; color: #A8A2B0">Mon instrument</div>
+      <div style="font-size: 15px; font-weight: 700">Caixa · voir la décomposition</div>
+    </div>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8A2B0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg>
+  </a>
+
+  <div style="flex: 1 1 auto"></div>
+
+  <div style="padding: 0 20px 28px; display: flex; align-items: center; gap: 12px">
+    <button style="height: 56px; padding: 0 16px; border-radius: 16px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1 1 0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"></path><path d="M21 3v6h-6"></path></svg>
+      Boucle · 4 mesures
+    </button>
+    <button aria-label="{{playLabel}}" onClick="{{togglePlay}}" style="width: 76px; height: 76px; border-radius: 50%; border: none; background: #F2B134; color: #1A1500; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto; box-shadow: 0 10px 30px rgba(242,177,52,0.35)">
+      <sc-if value="{{playing}}" hint-placeholder-val="{{false}}">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"></rect><rect x="14" y="5" width="4" height="14" rx="1"></rect></svg>
+      </sc-if>
+      <sc-if value="{{stopped}}" hint-placeholder-val="{{true}}">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+      </sc-if>
+    </button>
+    <button style="height: 56px; padding: 0 16px; border-radius: 16px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1 1 0">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h10M4 18h7"></path></svg>
+      Compte · 1 mesure
+    </button>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2B134","options":["#F2B134","#FF7A5C","#3ECFA6","#7FA8FF"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { bpm: 96, playing: false, step: -1, muted: {}, mineHidden: false };
+    this.timer = null;
+    this.patterns = [
+      { id: 'surdo1', name: 'Surdo 1', role: 'marcação', hits: [4, 12], ghosts: [] },
+      { id: 'surdo2', name: 'Surdo 2', role: 'resposta', hits: [0, 8], ghosts: [] },
+      { id: 'surdo3', name: 'Surdo 3', role: 'dobra', hits: [6, 7, 14, 15], ghosts: [3, 11] },
+      { id: 'caixa', name: 'Caixa', role: 'mon instrument', hits: [0, 3, 6, 10, 12], ghosts: [1, 2, 4, 5, 7, 8, 9, 11, 13, 14, 15] },
+      { id: 'repique', name: 'Repique', role: 'appels', hits: [0, 3, 5, 8, 11, 13], ghosts: [2, 6, 10, 14] },
+      { id: 'timbal', name: 'Timbal', role: 'variations', hits: [0, 3, 6, 8, 11, 14], ghosts: [1, 9] }
+    ];
+  }
+  componentDidMount() { this.sync(); }
+  componentWillUnmount() { if (this.timer) clearInterval(this.timer); }
+  sync() {
+    if (this.timer) { clearInterval(this.timer); this.timer = null; }
+    if (!this.state.playing) return;
+    var ms = 15000 / this.state.bpm;
+    this.timer = setInterval(() => {
+      this.setState({ step: (this.state.step + 1) % 16 });
+    }, ms);
+  }
+  renderVals() {
+    var accent = this.props.accent || '#F2B134';
+    var s = this.state;
+    var bpm = s.bpm;
+    var pct = Math.round(((bpm - 60) / 120) * 100);
+    var anySolo = s.mineHidden;
+    var rows = this.patterns.map((p) => {
+      var muted = !!s.muted[p.id] || (s.mineHidden && p.id === 'caixa');
+      var cells = [];
+      for (var i = 0; i < 16; i++) {
+        var on = p.hits.indexOf(i) >= 0;
+        var ghost = p.ghosts.indexOf(i) >= 0;
+        var cur = s.playing && s.step === i;
+        var bg = on ? accent : (ghost ? 'rgba(242,177,52,0.28)' : '#2A2630');
+        if (on && p.id === 'caixa') bg = accent;
+        var style = 'width: 11px; height: 28px; border-radius: 3px; flex: 0 0 auto; background: ' + bg + ';';
+        if (i % 4 === 0 && i > 0) style += ' margin-left: 6px;';
+        if (cur) style += ' box-shadow: 0 0 0 2px #F4F1EA inset;';
+        if (cur && !on && !ghost) style += ' background: #3A3542;';
+        cells.push({ style: style });
+      }
+      var rowStyle = 'display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 12px; background: ' + (p.id === 'caixa' ? '#211D27' : 'transparent') + '; opacity: ' + (muted ? '0.38' : '1') + ';';
+      var btnStyle = 'width: 32px; height: 32px; border-radius: 10px; border: 1px solid #35303D; background: ' + (muted ? '#35303D' : '#1E1B22') + '; color: #F4F1EA; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto;';
+      return {
+        name: p.name, role: p.role, muted: muted, audible: !muted, cells: cells, style: rowStyle, btnStyle: btnStyle,
+        toggle: () => {
+          var m = Object.assign({}, this.state.muted);
+          m[p.id] = !m[p.id];
+          this.setState({ muted: m, mineHidden: p.id === 'caixa' ? false : this.state.mineHidden });
+        }
+      };
+    });
+    var ruler = [];
+    for (var j = 0; j < 16; j++) {
+      var cur = s.playing && s.step === j;
+      var st = 'width: 11px; flex: 0 0 auto; text-align: center; font-size: 10px; font-weight: 700; color: ' + (cur ? '#F4F1EA' : (j % 4 === 0 ? '#A8A2B0' : 'transparent')) + ';';
+      if (j % 4 === 0 && j > 0) st += ' margin-left: 6px;';
+      ruler.push({ label: String(j / 4 + 1).replace(/\..*$/, ''), style: st });
+    }
+    return {
+      bpm: bpm,
+      playing: s.playing,
+      stopped: !s.playing,
+      playLabel: s.playing ? 'Pause' : 'Lancer le rythme',
+      sliderStyle: 'position: absolute; left: 0; top: 0; height: 6px; border-radius: 3px; background: ' + accent + '; width: ' + pct + '%;',
+      rows: rows,
+      ruler: ruler,
+      slower: () => { this.setState({ bpm: Math.max(60, this.state.bpm - 2) }, () => this.sync()); },
+      faster: () => { this.setState({ bpm: Math.min(180, this.state.bpm + 2) }, () => this.sync()); },
+      soloMine: () => { this.setState({ mineHidden: !this.state.mineHidden }); },
+      togglePlay: () => { this.setState({ playing: !this.state.playing, step: this.state.playing ? -1 : this.state.step }, () => this.sync()); }
+    };
+  }
+}
+</script>
+</body>
+</html>

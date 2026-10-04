@@ -1,0 +1,20 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-04T10:00:00Z"},
+  "title": "Batu Tempo",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "1 · Accueil — Rythmes", "radius": 40},
+    "Player.dc.html": {"x": 470, "y": 0, "w": 390, "h": 844, "title": "2 · Lecteur — Samba Reggae", "radius": 40, "is_interactive": true},
+    "Instrument.dc.html": {"x": 940, "y": 0, "w": 390, "h": 844, "title": "3 · Instrument — Caixa", "radius": 40},
+    "Exercices.dc.html": {"x": 1410, "y": 0, "w": 390, "h": 844, "title": "4 · Exercices", "radius": 40},
+    "Break.dc.html": {"x": 1880, "y": 0, "w": 390, "h": 844, "title": "5 · Exercice — Break & reprise", "radius": 40, "is_interactive": true}
+  },
+  "order": ["Main.dc.html", "Player.dc.html", "Instrument.dc.html", "Exercices.dc.html", "Break.dc.html"],
+  "notes": {
+    "titre": {"x": 0, "y": -300, "text": "Batu Tempo — parcours principal (maquette v1)", "kind": "title1", "maxW": 2270},
+    "legende": {"x": 2350, "y": 0, "w": 300, "text": "Parcours cliquable : les cartes de l'accueil ouvrent le lecteur, « Mon instrument » ouvre la décomposition, l'onglet Exercices ouvre la liste, et « Break & reprise » lance l'exercice.\n\nLes écrans 2 et 5 sont jouables (Play) : tempo, mute par instrument, défilement de la grille, compte à rebours du break.", "fill": "orange"}
+  },
+  "designSystems": []
+}

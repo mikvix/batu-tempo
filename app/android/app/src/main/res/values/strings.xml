@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Batu Tempo</string>
+    <string name="title_activity_main">Batu Tempo</string>
+    <string name="package_name">com.batutempo.app</string>
+    <string name="custom_url_scheme">com.batutempo.app</string>
+</resources>

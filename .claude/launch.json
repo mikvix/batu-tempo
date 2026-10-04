@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "angular-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "app", "start", "--", "--port", "4200"],
+      "port": 4200
+    },
+    {
+      "name": "pwa-static",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "app", "run", "serve:web"],
+      "port": 4300
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+# Dépendances et sorties de build (le détail par dossier est dans app/.gitignore et app/android/.gitignore)
+node_modules/
+app/dist/
+app/.angular/
+
+# Fichiers locaux
+*.log
+.DS_Store
+Thumbs.db
+.env*.local

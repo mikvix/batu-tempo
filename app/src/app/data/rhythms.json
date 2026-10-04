@@ -1,0 +1,435 @@
+{
+  "$comment": "Patterns indicatifs, écrits en doubles-croches : 16 pas par mesure de 4 temps, les espaces séparent les temps et | sépare les mesures (décoratif). Un pattern peut couvrir 2, 3 ou 4 mesures (32, 48, 64 pas) : il boucle sur sa longueur et repart de sa première mesure après un break. X = accent, x = frappe, o = ghost note, . = silence. level : 1 débutant, 2 intermédiaire, 3 avancé. voice : surdo1, surdo2, surdo3, alfaia, caixa, repique, timbal, tamborim, agogo, gongue, chocalho, triangulo, pandeiro. Un break est une liste de mesures ; un instrument absent d'une mesure se tait. À ajuster avec les partitions de ta batucada.",
+  "rhythms": [
+    {
+      "id": "samba-lent",
+      "name": "Samba lent",
+      "origin": "Bahia · samba de roda",
+      "level": 1,
+      "bpm": 84,
+      "bpmRange": [72, 96],
+      "description": "Le samba posé pour apprendre le balancement : deux surdos qui se répondent, caixa régulière, pandeiro et agogô.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "marcação", "voice": "surdo1", "pattern": ".... X... .... X..." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "resposta", "voice": "surdo2", "pattern": "X... .... X... ...." },
+        {
+          "id": "caixa",
+          "name": "Caixa",
+          "short": "CX",
+          "role": "tapis",
+          "voice": "caixa",
+          "showHands": true,
+          "pattern": "Xoxo xoXo Xoxo xoXo",
+          "variations": [
+            { "id": "base", "name": "Groove de base", "pattern": "Xoxo xoXo Xoxo xoXo" },
+            { "id": "simple", "name": "Croches simples", "pattern": "X.x. x.x. X.x. x.x." }
+          ]
+        },
+        { "id": "pandeiro", "name": "Pandeiro", "short": "PD", "role": "tapis", "voice": "pandeiro", "pattern": "x.x. x.x. x.x. x.x." },
+        { "id": "agogo", "name": "Agogô", "short": "AG", "role": "clave", "voice": "agogo", "pattern": "x..X ..x. x..X ..x." }
+      ],
+      "breaks": [
+        {
+          "id": "paradinha",
+          "name": "Paradinha simple",
+          "description": "Tout le monde frappe les quatre temps, puis un seul coup sur le 1.",
+          "bars": [
+            { "surdo1": "X... X... X... X...", "surdo2": "X... X... X... X...", "caixa": "X... X... X... X..." },
+            { "surdo1": "X... .... .... ....", "surdo2": "X... .... .... ....", "caixa": "X... .... .... ...." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "funk",
+      "name": "Funk",
+      "origin": "Rio de Janeiro",
+      "level": 1,
+      "bpm": 100,
+      "bpmRange": [90, 116],
+      "description": "Le groove carré du funk carioca : surdos sur les temps, caixa en contretemps, repique qui remplit.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "temps 1 et 3", "voice": "surdo1", "pattern": "X... .... X... ...." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "temps 2 et 4", "voice": "surdo2", "pattern": ".... X... .... X..." },
+        {
+          "id": "caixa",
+          "name": "Caixa",
+          "short": "CX",
+          "role": "contretemps",
+          "voice": "caixa",
+          "showHands": true,
+          "pattern": "o.o. X.o. o.o. X.o.",
+          "variations": [
+            { "id": "base", "name": "Contretemps", "pattern": "o.o. X.o. o.o. X.o." },
+            { "id": "plein", "name": "Tapis plein", "pattern": "xoxo Xoxo xoxo Xoxo" }
+          ]
+        },
+        { "id": "repique", "name": "Repique", "short": "RP", "role": "remplissage", "voice": "repique", "showHands": true, "pattern": "x.x. x.xx x.x. x.xx" },
+        { "id": "chocalho", "name": "Chocalho", "short": "CH", "role": "tapis", "voice": "chocalho", "pattern": "x.x. x.x. x.x. x.x." }
+      ],
+      "call": { "instrumentId": "repique", "pattern": "X.X. X.X. XxXx X.X." },
+      "breaks": [
+        {
+          "id": "stop",
+          "name": "Stop",
+          "description": "Deux coups par temps sur la dernière mesure, silence, reprise sur le 1.",
+          "bars": [
+            { "surdo1": "X... X... X... X.X.", "surdo2": "X... X... X... X.X.", "caixa": "X... X... X... X.X.", "repique": "X... X... X... X.X." },
+            { "surdo1": "X... .... .... ....", "surdo2": "X... .... .... ....", "repique": ".... .... .... xxXX" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "marcha",
+      "name": "Marchinha",
+      "origin": "Carnaval de rue",
+      "level": 1,
+      "bpm": 120,
+      "bpmRange": [108, 132],
+      "description": "La marche de carnaval : binaire, entraînante, idéale pour caler les surdos et la caixa ensemble.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "temps forts", "voice": "surdo1", "pattern": "X... .... X... ...." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "temps faibles", "voice": "surdo2", "pattern": ".... X... .... X..." },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "X.x. x.x. X.x. x.x." },
+        { "id": "tamborim", "name": "Tamborim", "short": "TM", "role": "dessin", "voice": "tamborim", "pattern": "x.x. ..x. x.x. ..x." },
+        { "id": "agogo", "name": "Agogô", "short": "AG", "role": "clave", "voice": "agogo", "pattern": "X... x... X... x..." }
+      ],
+      "breaks": [
+        {
+          "id": "roulement",
+          "name": "Roulement",
+          "description": "Croches ensemble puis arrêt net sur le 3.",
+          "bars": [
+            { "surdo1": "X.X. X.X. X... ....", "surdo2": "X.X. X.X. X... ....", "caixa": "X.X. X.X. X... ....", "tamborim": "X.X. X.X. X... ...." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ciranda",
+      "name": "Ciranda",
+      "origin": "Pernambuco",
+      "level": 1,
+      "bpm": 80,
+      "bpmRange": [68, 92],
+      "description": "La ronde lente du littoral : bombo profond, caixa souple, gonguê et ganzá. Parfait pour travailler la stabilité à tempo lent.",
+      "instruments": [
+        { "id": "bombo", "name": "Bombo", "short": "BO", "role": "grave", "voice": "alfaia", "pattern": "X... .... x.x. ...." },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "X.x. x.x. X.x. x.x." },
+        { "id": "gongue", "name": "Gonguê", "short": "GG", "role": "clave", "voice": "gongue", "pattern": "X... x... X... x..." },
+        { "id": "ganza", "name": "Ganzá", "short": "GZ", "role": "tapis", "voice": "chocalho", "pattern": "xoxo xoxo xoxo xoxo" }
+      ],
+      "breaks": [
+        {
+          "id": "appel",
+          "name": "Appel du bombo",
+          "description": "Le bombo marque les temps, tout le monde répond sur le 1.",
+          "bars": [
+            { "bombo": "X... X... X.X. X...", "gongue": "X... X... X.X. X..." },
+            { "bombo": "X... .... .... ....", "caixa": "X... .... .... ....", "gongue": "X... .... .... ...." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "afoxe",
+      "name": "Afoxé",
+      "origin": "Bahia",
+      "level": 1,
+      "bpm": 108,
+      "bpmRange": [96, 118],
+      "description": "Le balancement de l'ijexá : cloche en clave, tambours souples, shaker continu.",
+      "instruments": [
+        { "id": "rum", "name": "Rum", "short": "RU", "role": "grave", "voice": "surdo1", "pattern": "X... .... x... X..." },
+        { "id": "rumpi", "name": "Rumpi", "short": "RP", "role": "médium", "voice": "surdo3", "pattern": ".... x... .... x..." },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "x.xx x.xx x.xx x.xx" },
+        { "id": "agogo", "name": "Agogô", "short": "AG", "role": "clave ijexá", "voice": "agogo", "pattern": "x.x. x..X .x.x .x.X" },
+        { "id": "afoxe", "name": "Afoxé", "short": "AF", "role": "shaker", "voice": "chocalho", "pattern": "Xoxo Xoxo Xoxo Xoxo" }
+      ],
+      "breaks": [
+        {
+          "id": "cloche",
+          "name": "Break cloche",
+          "description": "Tout le monde se tait sauf la cloche, puis reprise.",
+          "bars": [
+            { "agogo": "x.x. x..X .x.x .x.X", "rum": "X... .... .... ...." },
+            { "agogo": "x.x. x..X .x.x .x.X", "afoxe": ".... .... .... XoXo" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "samba-reggae",
+      "name": "Samba Reggae",
+      "origin": "Salvador",
+      "level": 2,
+      "bpm": 96,
+      "bpmRange": [88, 110],
+      "description": "Le groove lourd de Bahia : surdos en dialogue, caixa en doubles-croches, repique qui appelle.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "marcação", "voice": "surdo1", "pattern": ".... X... .... X..." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "resposta", "voice": "surdo2", "pattern": "X... .... X... ...." },
+        {
+          "id": "surdo3",
+          "name": "Surdo 3",
+          "short": "S3",
+          "role": "dobra",
+          "voice": "surdo3",
+          "pattern": "...o ..xX ...o ..xX | ...o ..xX x.x. XxXx",
+          "variations": [
+            { "id": "base", "name": "Dobra sur 2 mesures", "pattern": "...o ..xX ...o ..xX | ...o ..xX x.x. XxXx" },
+            { "id": "simple", "name": "Dobra simple", "pattern": "...o ..xX ...o ..xX" },
+            { "id": "virada", "name": "Virada", "pattern": "x.x. x.xX x.x. XxXx" }
+          ]
+        },
+        {
+          "id": "caixa",
+          "name": "Caixa",
+          "short": "CX",
+          "role": "tapis",
+          "voice": "caixa",
+          "showHands": true,
+          "pattern": "XooX ooXo ooXo Xooo",
+          "variations": [
+            { "id": "base", "name": "Groove de base", "pattern": "XooX ooXo ooXo Xooo" },
+            { "id": "virada", "name": "Virada", "pattern": "XoXo XoXo XXoX oXoX" },
+            { "id": "break", "name": "Break caixa", "pattern": "X.X. X.X. X.X. XXXX" },
+            { "id": "entree", "name": "Entrée", "pattern": ".... .... XoXo XoXo" }
+          ]
+        },
+        { "id": "repique", "name": "Repique", "short": "RP", "role": "appels", "voice": "repique", "showHands": true, "pattern": "X.oX .xo. X.oX .xo." },
+        { "id": "timbal", "name": "Timbal", "short": "TB", "role": "variations", "voice": "timbal", "pattern": "Xo.x ..x. Xo.x ..x." }
+      ],
+      "call": { "instrumentId": "repique", "pattern": "XxX. XxX. XxXx X.X." },
+      "breaks": [
+        {
+          "id": "surdos",
+          "name": "Break surdos",
+          "description": "Les surdos et la caixa frappent les temps, silence, puis reprise sur le 1.",
+          "bars": [
+            { "surdo1": "X.x. X.x. X.x. X.x.", "surdo2": "X.x. X.x. X.x. X.x.", "surdo3": "X.x. X.x. X.x. X.x.", "caixa": "X.x. X.x. X.x. X.x." },
+            { "surdo1": "X... .... .... ....", "surdo2": "X... .... .... ....", "surdo3": "X... .... .... ....", "repique": ".... .... .... XxXx" }
+          ]
+        },
+        {
+          "id": "caixa",
+          "name": "Break caixa",
+          "description": "La caixa reste seule deux mesures, les surdos marquent le 1.",
+          "bars": [
+            { "caixa": "XoXo XoXo XoXo XoXo", "surdo1": "X... .... .... ...." },
+            { "caixa": "XoXo XoXo X.X. XXXX", "surdo2": "X... .... .... ...." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maracatu",
+      "name": "Maracatu",
+      "origin": "Recife",
+      "level": 2,
+      "bpm": 100,
+      "bpmRange": [88, 112],
+      "description": "Le cortège des nations : alfaias profondes, caixa serrée et gonguê qui mène la danse.",
+      "instruments": [
+        { "id": "alfaia1", "name": "Alfaia grave", "short": "A1", "role": "marcação", "voice": "alfaia", "pattern": "X... ..X. X... ..X." },
+        { "id": "alfaia2", "name": "Alfaia", "short": "A2", "role": "resposta", "voice": "surdo3", "pattern": "..X. .X.. ..X. .X.." },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "Xxxo xxXx Xxxo xxXx" },
+        { "id": "gongue", "name": "Gonguê", "short": "GG", "role": "clave", "voice": "gongue", "pattern": "X..X ..X. X..X ..X." },
+        { "id": "abe", "name": "Abê", "short": "AB", "role": "tapis", "voice": "chocalho", "pattern": "xoxo xoxo xoxo xoxo" }
+      ],
+      "breaks": [
+        {
+          "id": "virada",
+          "name": "Virada",
+          "description": "Les alfaias doublent, puis un coup sec sur le 1.",
+          "bars": [
+            { "alfaia1": "X.X. X.X. X.X. X.X.", "alfaia2": "X.X. X.X. X.X. X.X.", "caixa": "X.X. X.X. X.X. XXXX" },
+            { "alfaia1": "X... .... .... ....", "alfaia2": "X... .... .... ....", "gongue": ".... .... X..X ..X." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "baiao",
+      "name": "Baião",
+      "origin": "Nordeste",
+      "level": 2,
+      "bpm": 110,
+      "bpmRange": [100, 126],
+      "description": "Le trio nordestin version batucada : zabumba en avant, triangle en tapis, caixa qui dialogue.",
+      "instruments": [
+        {
+          "id": "zabumba",
+          "name": "Zabumba",
+          "short": "ZB",
+          "role": "grave",
+          "voice": "alfaia",
+          "pattern": "X..x ..x. X..x ..x.",
+          "variations": [
+            { "id": "base", "name": "Baião de base", "pattern": "X..x ..x. X..x ..x." },
+            { "id": "xote", "name": "Xote", "pattern": "X... x.x. X... x.x." }
+          ]
+        },
+        { "id": "triangulo", "name": "Triangle", "short": "TR", "role": "tapis", "voice": "triangulo", "pattern": "X.x. x.x. X.x. x.x." },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "dialogue", "voice": "caixa", "showHands": true, "pattern": "x.xx .x.x x.xx .x.x" },
+        { "id": "agogo", "name": "Agogô", "short": "AG", "role": "clave", "voice": "agogo", "pattern": "x..x ..x. ..x. x..." }
+      ],
+      "breaks": [
+        {
+          "id": "zabumba",
+          "name": "Break zabumba",
+          "description": "Le zabumba reste seul sur sa clave, le groupe revient sur le 1.",
+          "bars": [
+            { "zabumba": "X..X ..X. X..X ..X.", "triangulo": "X... X... X... X..." },
+            { "zabumba": "X..X ..X. .... ....", "caixa": ".... .... .... xxXX" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coco",
+      "name": "Coco",
+      "origin": "Alagoas · Pernambuco",
+      "level": 2,
+      "bpm": 112,
+      "bpmRange": [100, 126],
+      "description": "Le coco de roda : bombo en clave ternaire sur le binaire, caixa accentuée, pandeiro et ganzá.",
+      "instruments": [
+        { "id": "bombo", "name": "Bombo", "short": "BO", "role": "clave", "voice": "alfaia", "pattern": "X..X ..X. X..X ..X." },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "xoXo xoXo xoXo xoXo" },
+        { "id": "pandeiro", "name": "Pandeiro", "short": "PD", "role": "dialogue", "voice": "pandeiro", "pattern": "x.xx .x.x x.xx .x.x" },
+        { "id": "ganza", "name": "Ganzá", "short": "GZ", "role": "tapis", "voice": "chocalho", "pattern": "xoxo xoxo xoxo xoxo" }
+      ],
+      "breaks": [
+        {
+          "id": "clave",
+          "name": "Clave ensemble",
+          "description": "Tout le monde joue la clave du bombo, puis un coup sur le 1.",
+          "bars": [
+            { "bombo": "X..X ..X. X..X ..X.", "caixa": "X..X ..X. X..X ..X.", "pandeiro": "X..X ..X. X..X ..X." },
+            { "bombo": "X... .... .... ....", "caixa": "X... .... .... ....", "ganza": ".... .... .... xoxo" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "axe",
+      "name": "Axé",
+      "origin": "Salvador",
+      "level": 2,
+      "bpm": 104,
+      "bpmRange": [96, 118],
+      "description": "Le samba-funk des blocos de Bahia : surdos syncopés, timbal en avant, chocalho en tapis.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "marcação", "voice": "surdo1", "pattern": "X... ..X. .... X..." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "resposta", "voice": "surdo2", "pattern": ".... X... .... X..." },
+        { "id": "timbal", "name": "Timbal", "short": "TB", "role": "mélodie", "voice": "timbal", "pattern": "Xo.x ..x. Xo.x ..xX" },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "XooX ooXo ooXo Xooo" },
+        { "id": "repique", "name": "Repique", "short": "RP", "role": "appels", "voice": "repique", "showHands": true, "pattern": "x.xx .x.x x.xx .x.x" },
+        { "id": "chocalho", "name": "Chocalho", "short": "CH", "role": "tapis", "voice": "chocalho", "pattern": "Xoxo Xoxo Xoxo Xoxo" }
+      ],
+      "call": { "instrumentId": "repique", "pattern": "XxX. XxX. XxXx X.X." },
+      "breaks": [
+        {
+          "id": "timbal",
+          "name": "Break timbal",
+          "description": "Le timbal seul sur une mesure, les surdos répondent, reprise.",
+          "bars": [
+            { "timbal": "XxXx XxXx XxXx XxXx", "surdo1": "X... .... .... ...." },
+            { "surdo1": "X... X... X... X.X.", "surdo2": "X... X... X... X.X.", "caixa": "X... X... X... X.X." }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "samba-enredo",
+      "name": "Samba de Enredo",
+      "origin": "Rio de Janeiro",
+      "level": 3,
+      "bpm": 140,
+      "bpmRange": [126, 152],
+      "description": "La bateria des écoles de samba : rapide, tamborins et chocalhos en tapis continu.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "marcação", "voice": "surdo1", "pattern": ".... X... .... X..." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "resposta", "voice": "surdo2", "pattern": "X... .... X... ...." },
+        { "id": "surdo3", "name": "Surdo 3", "short": "S3", "role": "terceira", "voice": "surdo3", "pattern": "..x. x.x. ..x. x.xX" },
+        { "id": "caixa", "name": "Caixa", "short": "CX", "role": "tapis", "voice": "caixa", "showHands": true, "pattern": "XoxX oxoX oxXo xoXo" },
+        { "id": "repique", "name": "Repique", "short": "RP", "role": "appels", "voice": "repique", "showHands": true, "pattern": "X.xx .x.x X.xx .x.x" },
+        {
+          "id": "tamborim",
+          "name": "Tamborim",
+          "short": "TM",
+          "role": "desenho",
+          "voice": "tamborim",
+          "pattern": "x.xx .x.x x.x. xx.x | x.xx .x.x xx.x x.x.",
+          "variations": [
+            { "id": "base", "name": "Desenho sur 2 mesures", "pattern": "x.xx .x.x x.x. xx.x | x.xx .x.x xx.x x.x." },
+            { "id": "carreteiro", "name": "Carreteiro", "pattern": "x.x. x.x. x.x. x.x." }
+          ]
+        },
+        { "id": "chocalho", "name": "Chocalho", "short": "CH", "role": "tapis", "voice": "chocalho", "pattern": "Xoxo Xoxo Xoxo Xoxo" },
+        { "id": "agogo", "name": "Agogô", "short": "AG", "role": "mélodie", "voice": "agogo", "pattern": "x..X ..x. ..X. x..." }
+      ],
+      "call": { "instrumentId": "repique", "pattern": "XxxX xxXx xXxx XxXx" },
+      "breaks": [
+        {
+          "id": "paradinha",
+          "name": "Paradinha",
+          "description": "Tout le monde frappe le même dessin, puis un seul coup sur le 1.",
+          "bars": [
+            {
+              "surdo1": "X..X ..X. X..X ..X.",
+              "surdo2": "X..X ..X. X..X ..X.",
+              "surdo3": "X..X ..X. X..X ..X.",
+              "caixa": "X..X ..X. X..X ..X.",
+              "repique": "X..X ..X. X..X ..X.",
+              "tamborim": "X..X ..X. X..X ..X.",
+              "chocalho": "X..X ..X. X..X ..X."
+            },
+            { "surdo1": "X... .... .... ....", "surdo2": "X... .... .... ....", "caixa": "X... .... .... ....", "repique": ".... .... .... xxXX" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frevo",
+      "name": "Frevo",
+      "origin": "Recife",
+      "level": 3,
+      "bpm": 170,
+      "bpmRange": [150, 186],
+      "description": "Le frevo de rue : très rapide, caixa virevoltante, surdos qui martèlent. Pour l'endurance et la précision.",
+      "instruments": [
+        { "id": "surdo1", "name": "Surdo 1", "short": "S1", "role": "temps forts", "voice": "surdo1", "pattern": "X... .... X... ...." },
+        { "id": "surdo2", "name": "Surdo 2", "short": "S2", "role": "temps faibles", "voice": "surdo2", "pattern": ".... X... .... X..." },
+        {
+          "id": "caixa",
+          "name": "Caixa",
+          "short": "CX",
+          "role": "tapis",
+          "voice": "caixa",
+          "showHands": true,
+          "pattern": "X.xX .xX. X.xX .xX.",
+          "variations": [
+            { "id": "base", "name": "Frevo de base", "pattern": "X.xX .xX. X.xX .xX." },
+            { "id": "roule", "name": "Roulé", "pattern": "Xoxo Xoxo Xoxo XoXo" }
+          ]
+        },
+        { "id": "pandeiro", "name": "Pandeiro", "short": "PD", "role": "tapis", "voice": "pandeiro", "pattern": "x.x. x.x. x.x. x.x." },
+        { "id": "agogo", "name": "Agogô", "short": "AG", "role": "clave", "voice": "agogo", "pattern": "x..x ..x. x..x ..x." }
+      ],
+      "breaks": [
+        {
+          "id": "paradinha",
+          "name": "Paradinha",
+          "description": "Croches ensemble sur une mesure, puis un coup sur le 1.",
+          "bars": [
+            { "surdo1": "X.X. X.X. X.X. X.X.", "surdo2": "X.X. X.X. X.X. X.X.", "caixa": "X.X. X.X. X.X. X.X." },
+            { "surdo1": "X... .... .... ....", "surdo2": "X... .... .... ....", "caixa": "X... .... .... ...." }
+          ]
+        }
+      ]
+    }
+  ]
+}

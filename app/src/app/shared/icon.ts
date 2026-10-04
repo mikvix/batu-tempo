@@ -1,0 +1,154 @@
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+
+export type IconName =
+  | 'back'
+  | 'play'
+  | 'pause'
+  | 'plus'
+  | 'minus'
+  | 'sliders'
+  | 'volume'
+  | 'volume-mute'
+  | 'chevron-right'
+  | 'chevron-down'
+  | 'chevron-up'
+  | 'flash'
+  | 'refresh'
+  | 'skip'
+  | 'shuffle'
+  | 'pulse'
+  | 'target'
+  | 'metronome'
+  | 'person'
+  | 'eye-off'
+  | 'megaphone'
+  | 'trending'
+  | 'hourglass'
+  | 'timer'
+  | 'swap'
+  | 'list'
+  | 'disc';
+
+/** Icônes en SVG inline (traits), colorées par `currentColor`. */
+@Component({
+  selector: 'app-icon',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { style: 'display:inline-flex; line-height:0' },
+  template: `
+    <svg
+      [attr.width]="size()"
+      [attr.height]="size()"
+      viewBox="0 0 24 24"
+      [attr.fill]="filled() ? 'currentColor' : 'none'"
+      [attr.stroke]="filled() ? 'none' : 'currentColor'"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true">
+      @switch (name()) {
+        @case ('back') {
+          <path d="M15 18l-6-6 6-6" />
+        }
+        @case ('play') {
+          <path d="M8 5v14l11-7z" />
+        }
+        @case ('pause') {
+          <rect x="6" y="5" width="4" height="14" rx="1" />
+          <rect x="14" y="5" width="4" height="14" rx="1" />
+        }
+        @case ('plus') {
+          <path d="M12 5v14M5 12h14" />
+        }
+        @case ('minus') {
+          <path d="M5 12h14" />
+        }
+        @case ('sliders') {
+          <path d="M4 7h16M4 17h16" />
+          <circle cx="14" cy="7" r="2.5" fill="var(--surface)" />
+          <circle cx="9" cy="17" r="2.5" fill="var(--surface)" />
+        }
+        @case ('volume') {
+          <path d="M11 5 6 9H2v6h4l5 4z" />
+          <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+        }
+        @case ('volume-mute') {
+          <path d="M11 5 6 9H2v6h4l5 4z" />
+          <path d="m22 9-6 6M16 9l6 6" />
+        }
+        @case ('chevron-right') {
+          <path d="m9 6 6 6-6 6" />
+        }
+        @case ('chevron-down') {
+          <path d="m6 9 6 6 6-6" />
+        }
+        @case ('chevron-up') {
+          <path d="m6 15 6-6 6 6" />
+        }
+        @case ('flash') {
+          <path d="M13 2 4 14h7l-1 8 9-12h-7z" />
+        }
+        @case ('refresh') {
+          <path d="M3 12a9 9 0 1 0 3-6.7" />
+          <path d="M3 3v6h6" />
+        }
+        @case ('skip') {
+          <path d="M5 4l10 8-10 8z" />
+          <path d="M19 4v16" />
+        }
+        @case ('shuffle') {
+          <path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" />
+        }
+        @case ('pulse') {
+          <path d="M3 12h2l2-6 3 12 3-9 2 5 2-2h4" />
+        }
+        @case ('target') {
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="5" />
+          <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+        }
+        @case ('metronome') {
+          <path d="M9 3h6l3 18H6z" />
+          <path d="M12 15l5-9" />
+        }
+        @case ('person') {
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+        }
+        @case ('eye-off') {
+          <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z" />
+          <path d="M3 3l18 18" />
+        }
+        @case ('megaphone') {
+          <path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z" />
+          <path d="M17 9a4 4 0 0 1 0 6" />
+        }
+        @case ('trending') {
+          <path d="M3 17l5-5 4 4 5-7 4 3" />
+        }
+        @case ('hourglass') {
+          <path d="M6 3h12M6 21h12M8 3v4l4 5 4-5V3M8 21v-4l4-5 4 5v4" />
+        }
+        @case ('timer') {
+          <circle cx="12" cy="13" r="8" />
+          <path d="M12 9v4l3 2M9 2h6" />
+        }
+        @case ('swap') {
+          <path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4" />
+        }
+        @case ('list') {
+          <path d="M4 6h16M4 12h10M4 18h7" />
+        }
+        @case ('disc') {
+          <ellipse cx="12" cy="7" rx="8" ry="3" />
+          <path d="M4 7v9c0 1.7 3.6 3 8 3s8-1.3 8-3V7" />
+          <path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />
+        }
+      }
+    </svg>
+  `,
+})
+export class Icon {
+  readonly name = input.required<IconName>();
+  readonly size = input(22);
+  readonly filled = input(false);
+}
