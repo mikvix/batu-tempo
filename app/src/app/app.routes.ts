@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router';
 
+import type { EditorPage } from './pages/editor.page';
 import { TabsShell } from './pages/tabs-shell';
+
+/** Confirme avant de quitter l'éditeur avec des modifications non enregistrées. */
+const leaveEditor = (page: EditorPage) => page.canLeave();
 
 export const routes: Routes = [
   {
@@ -19,5 +23,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/instrument.page').then((m) => m.InstrumentPage),
   },
   { path: 'exercice/:id', loadComponent: () => import('./pages/exercise.page').then((m) => m.ExercisePage) },
+  {
+    path: 'editeur',
+    loadComponent: () => import('./pages/editor.page').then((m) => m.EditorPage),
+    canDeactivate: [leaveEditor],
+  },
+  {
+    path: 'editeur/:id',
+    loadComponent: () => import('./pages/editor.page').then((m) => m.EditorPage),
+    canDeactivate: [leaveEditor],
+  },
+  { path: 'import', loadComponent: () => import('./pages/import.page').then((m) => m.ImportPage) },
   { path: '**', redirectTo: '' },
 ];

@@ -1,7 +1,7 @@
 import data from './rhythms.json';
 import { barsOf, parsePattern, RhythmDef, SILENT_BAR } from './types';
 
-const VOICES = new Set([
+export const VOICES = new Set([
   'surdo1',
   'surdo2',
   'surdo3',

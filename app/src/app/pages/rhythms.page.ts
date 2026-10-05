@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { getInstrument, getRhythm, LEVELS, RHYTHMS } from '../data/rhythms';
+import { getInstrument, LEVELS, RHYTHMS } from '../data/rhythms';
 import { RhythmDef } from '../data/types';
 import { Icon } from '../shared/icon';
 import { LevelDots } from '../shared/ui';
+import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
 
 @Component({
@@ -34,6 +35,32 @@ import { SettingsService } from '../state/settings.service';
           <span class="resume__play"><app-icon name="play" [size]="22" [filled]="true" /></span>
         </a>
 
+        <div class="section-row">
+          <h2 class="title">Mes rythmes</h2>
+          @if (library.custom().length) {
+            <span class="muted">{{ library.custom().length }} {{ library.custom().length > 1 ? 'rythmes' : 'rythme' }}</span>
+          }
+        </div>
+        <div class="card-grid card-grid--3">
+          <a class="list-card create" routerLink="/editeur">
+            <span class="monogram create__icon"><app-icon name="plus" [size]="20" /></span>
+            <div class="grow stack" style="gap: 3px">
+              <span class="strong" style="font-size: 16px">Créer un rythme</span>
+              <span class="muted">Compose la grille de chaque instrument, puis partage-la au groupe</span>
+            </div>
+          </a>
+          @for (r of library.custom(); track r.id) {
+            <a class="list-card" [routerLink]="['/rythme', r.id]">
+              <span class="monogram">{{ short(r) }}</span>
+              <div class="grow stack" style="gap: 3px">
+                <span class="strong" style="font-size: 16px">{{ r.name }}</span>
+                <span class="muted">{{ r.origin }} · {{ r.bpm }} BPM · {{ r.instruments.length }} instruments</span>
+              </div>
+              <app-icon name="chevron-right" [size]="18" style="color: var(--muted)" />
+            </a>
+          }
+        </div>
+
         @for (group of groups; track group.level) {
           <div class="section-row">
             <div class="row" style="gap: 10px">
@@ -58,7 +85,7 @@ import { SettingsService } from '../state/settings.service';
         }
 
         <p class="muted" style="margin-top: 18px; text-align: center">
-          Les patterns sont indicatifs : adapte-les à ceux de ta batucada dans le fichier des rythmes.
+          Les patterns sont indicatifs : crée une variante pour les adapter à ceux de ta batucada.
         </p>
       </div>
     </div>
@@ -71,18 +98,21 @@ import { SettingsService } from '../state/settings.service';
     .resume__label { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.75; }
     .resume__title { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
     .resume__sub { font-size: 13px; opacity: 0.8; }
+    .create { border-style: dashed; border-color: var(--border); }
+    .create__icon { background: var(--accent); color: var(--on-accent); }
     .resume__play { width: 48px; height: 48px; border-radius: 50%; background: var(--on-accent); color: var(--accent);
       display: grid; place-items: center; flex: 0 0 auto; padding-left: 3px; }
   `,
 })
 export class RhythmsPage {
   private readonly settings = inject(SettingsService);
+  readonly library = inject(RhythmLibrary);
 
   readonly groups = LEVELS.map((l) => ({ ...l, rhythms: RHYTHMS.filter((r) => r.level === l.level) })).filter(
     (g) => g.rhythms.length > 0
   );
 
-  readonly last = computed(() => getRhythm(this.settings.lastRhythmId()));
+  readonly last = computed(() => this.library.get(this.settings.lastRhythmId()));
   readonly mine = computed(() => getInstrument(this.last(), this.settings.myInstrumentFor(this.last().id)));
   readonly lastBpm = computed(() => this.settings.settings().bpm[this.last().id] ?? this.last().bpm);
 

@@ -94,6 +94,14 @@ Le séquenceur est unique pour toute l'app : la lecture continue quand on change
 
 La source unique est `app/assets/logo.png` (carré, 1024 px). `npm run assets` en dérive l'icône classique, l'icône adaptative Android (visuel réduit dans la zone sûre sur fond sombre), le splash screen et le favicon, puis produit toutes les tailles dans `android/app/src/main/res` via `@capacitor/assets`. Pour changer de visuel, remplace ce fichier et relance la commande. `npm run logo:draw` régénère à la place un visuel dessiné en SVG (`app/scripts/make-logo.mjs`), utile si l'on veut repartir d'une base vectorielle.
 
+## Créer et partager des rythmes depuis l'app
+
+Depuis l'accueil, « Créer un rythme » ouvre l'éditeur : nom, niveau, tempo, longueur du groove (1, 2 ou 4 mesures) et du break (1 ou 2 mesures), puis une grille par instrument où chaque case tourne au toucher entre silence, frappe, accent et ghost. La lecture joue le brouillon en direct : une case modifiée s'entend dès la mesure suivante. Sur un rythme livré, « Créer une variante » ouvre l'éditeur prérempli.
+
+Les rythmes créés sont enregistrés sur l'appareil (section « Mes rythmes » de l'accueil) et utilisables partout : lecteur, décomposition, exercices. « Partager » produit un lien `…/batu-tempo/import#…` qui contient tout le rythme, compressé dans le fragment de l'URL : aucun serveur n'est sollicité, et la personne qui ouvre le lien peut écouter le rythme puis l'ajouter à ses propres rythmes. Pour intégrer un rythme au catalogue livré avec l'app, il suffit de recopier son contenu dans `rhythms.json`.
+
+Code concerné : `pages/editor.page.ts`, `pages/import.page.ts`, `shared/step-editor.ts`, `data/custom.ts` (conversion, validation des données reçues), `data/share.ts` (encodage du lien), `state/rhythm-library.service.ts` (rythmes livrés + personnels).
+
 ## Modifier les rythmes
 
 Tout se passe dans `app/src/app/data/rhythms.json` (le fichier `rhythms.ts` ne fait que le charger, le vérifier et le trier par niveau). Chaque rythme a un `level` (1 débutant, 2 intermédiaire, 3 avancé), un tempo de référence et une plage, des instruments avec leur `voice` (le son synthétisé utilisé), des breaks et éventuellement un appel. Au démarrage, une vérification signale en console les voix inconnues, les patterns mal formés et les instruments manquants dans un break. Un pattern est une chaîne de 16 caractères par mesure (doubles-croches), les espaces servent juste à lire les temps :

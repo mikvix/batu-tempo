@@ -3,8 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { buildBarSpec, PlayerService } from '../audio/player.service';
 import { BarSpec } from '../audio/sequencer';
 import { getExercise } from '../data/exercises';
-import { breakBars, getInstrument, getRhythm, grooveBar } from '../data/rhythms';
-import { ExerciseKind, parsePattern, SILENT_BAR, Velocity } from '../data/types';
+import { breakBars, getInstrument, grooveBar } from '../data/rhythms';
+import { RhythmLibrary } from '../state/rhythm-library.service';
+import { ExerciseKind, parsePattern, RhythmDef, SILENT_BAR, Velocity } from '../data/types';
 import { Icon } from '../shared/icon';
 import { StepCells } from '../shared/pattern-grid';
 import { Header, PlayButton } from '../shared/ui';
@@ -28,7 +29,7 @@ interface Cycle {
 
 interface CycleParams {
   kind: ExerciseKind;
-  rhythm: ReturnType<typeof getRhythm>;
+  rhythm: RhythmDef;
   breakId: string | undefined;
   random: boolean;
   grooveBars: number;
@@ -191,6 +192,7 @@ export class ExercisePage {
 
   readonly player = inject(PlayerService);
   readonly settings = inject(SettingsService);
+  private readonly library = inject(RhythmLibrary);
 
   readonly random = signal(false);
   readonly breakId = signal<string | undefined>(undefined);
@@ -198,7 +200,7 @@ export class ExercisePage {
   private cycleRef: Cycle | null = null;
 
   readonly exercise = computed(() => getExercise(this.id()));
-  readonly rhythmDef = computed(() => getRhythm(this.rhythm() ?? this.settings.lastRhythmId()));
+  readonly rhythmDef = computed(() => this.library.get(this.rhythm() ?? this.settings.lastRhythmId()));
   readonly mine = computed(() => getInstrument(this.rhythmDef(), this.settings.myInstrumentFor(this.rhythmDef().id)));
   readonly baseBpm = computed(() => this.settings.settings().bpm[this.rhythmDef().id] ?? this.rhythmDef().bpm);
   readonly currentBreak = computed(() => this.rhythmDef().breaks.find((b) => b.id === this.breakId()) ?? this.rhythmDef().breaks[0]);

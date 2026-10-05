@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { RouterLink } from '@angular/router';
 
 import { EXERCISE_FILTERS, EXERCISES } from '../data/exercises';
-import { getRhythm, RHYTHMS } from '../data/rhythms';
+import { RhythmLibrary } from '../state/rhythm-library.service';
 import { ExerciseDef } from '../data/types';
 import { Icon, IconName } from '../shared/icon';
 import { LevelDots } from '../shared/ui';
@@ -42,7 +42,7 @@ const ICON_COLORS: Record<ExerciseDef['id'], string> = {
 
         @if (pick()) {
           <div class="chip-row chip-row--wrap" style="margin-top: 12px">
-            @for (r of rhythms; track r.id) {
+            @for (r of rhythms(); track r.id) {
               <button class="chip" type="button" [class.chip--active]="r.id === rhythm().id" (click)="chooseRhythm(r.id)">
                 {{ r.name }}
               </button>
@@ -102,12 +102,13 @@ const ICON_COLORS: Record<ExerciseDef['id'], string> = {
 export class ExercisesPage {
   private readonly settings = inject(SettingsService);
 
-  readonly rhythms = RHYTHMS;
+  private readonly library = inject(RhythmLibrary);
+  readonly rhythms = this.library.all;
   readonly filters = EXERCISE_FILTERS;
   readonly filter = signal('Tous');
   readonly pick = signal(false);
 
-  readonly rhythm = computed(() => getRhythm(this.settings.lastRhythmId()));
+  readonly rhythm = computed(() => this.library.get(this.settings.lastRhythmId()));
   readonly list = computed(() => EXERCISES.filter((e) => this.filter() === 'Tous' || e.tags.includes(this.filter())));
 
   chooseRhythm(id: string): void {

@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 import { RouterLink } from '@angular/router';
 
 import { buildBarSpec, PlayerService } from '../audio/player.service';
-import { getInstrument, getRhythm, grooveBar } from '../data/rhythms';
+import { getInstrument, grooveBar } from '../data/rhythms';
+import { RhythmLibrary } from '../state/rhythm-library.service';
 import { barsOf, barSlice, parsePattern, Velocity } from '../data/types';
 import { Icon } from '../shared/icon';
 import { TempoControl } from '../shared/tempo-control';
@@ -137,6 +138,7 @@ export class InstrumentPage {
 
   readonly player = inject(PlayerService);
   private readonly settings = inject(SettingsService);
+  private readonly library = inject(RhythmLibrary);
 
   readonly speeds = SPEEDS;
   readonly speed = signal(70);
@@ -144,7 +146,7 @@ export class InstrumentPage {
   readonly click = signal(false);
   readonly variationId = signal<string | null>(null);
 
-  readonly rhythmDef = computed(() => getRhythm(this.rhythm()));
+  readonly rhythmDef = computed(() => this.library.get(this.rhythm()));
   readonly instrument = computed(() => getInstrument(this.rhythmDef(), this.inst()));
   readonly variations = computed(
     () => this.instrument().variations ?? [{ id: 'base', name: 'Groove de base', pattern: this.instrument().pattern }]

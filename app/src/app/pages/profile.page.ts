@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
-import { getRhythm, RHYTHMS } from '../data/rhythms';
+import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { SettingsService } from '../state/settings.service';
       <div class="page__scroll">
         <p class="label" style="margin-top: 8px">Rythme</p>
         <div class="chip-row chip-row--wrap" style="margin-top: 10px">
-          @for (r of rhythms; track r.id) {
+          @for (r of rhythms(); track r.id) {
             <button class="chip" type="button" [class.chip--active]="r.id === rhythm().id" (click)="settings.update({ lastRhythmId: r.id })">
               {{ r.name }}
             </button>
@@ -58,7 +58,7 @@ import { SettingsService } from '../state/settings.service';
 
         <div class="card stack" style="margin-top: 16px; gap: 6px">
           <span class="strong">Batu Tempo · version 0.1</span>
-          <span class="muted">Tous les sons sont synthétisés dans l'app, sans samples. Les rythmes et leurs patterns se modifient dans src/app/data/rhythms.json.</span>
+          <span class="muted">Tous les sons sont synthétisés dans l'app, sans samples. Crée tes propres rythmes depuis l'accueil ; les rythmes livrés sont dans src/app/data/rhythms.json.</span>
         </div>
       </div>
     </div>
@@ -69,7 +69,8 @@ import { SettingsService } from '../state/settings.service';
 })
 export class ProfilePage {
   readonly settings = inject(SettingsService);
-  readonly rhythms = RHYTHMS;
-  readonly rhythm = computed(() => getRhythm(this.settings.lastRhythmId()));
+  private readonly library = inject(RhythmLibrary);
+  readonly rhythms = this.library.all;
+  readonly rhythm = computed(() => this.library.get(this.settings.lastRhythmId()));
   readonly mine = computed(() => this.settings.myInstrumentFor(this.rhythm().id));
 }

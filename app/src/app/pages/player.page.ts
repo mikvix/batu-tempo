@@ -3,12 +3,15 @@ import { Router, RouterLink } from '@angular/router';
 
 import { buildBarSpec, PlayerService } from '../audio/player.service';
 import { BarSpec } from '../audio/sequencer';
-import { breakBars, getInstrument, getRhythm, grooveBar, grooveCycle } from '../data/rhythms';
+import { breakBars, getInstrument, grooveBar, grooveCycle } from '../data/rhythms';
+import { shareRhythm } from '../data/share';
 import { Icon } from '../shared/icon';
 import { BeatRuler, GRID_LEFT, InstrumentRow } from '../shared/pattern-grid';
 import { TempoControl } from '../shared/tempo-control';
 import { Header, PlayButton } from '../shared/ui';
+import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
+import { ToastService } from '../state/toast.service';
 
 @Component({
   selector: 'app-player-page',
@@ -78,7 +81,27 @@ import { SettingsService } from '../state/settings.service';
           <app-icon name="chevron-right" [size]="20" style="color: var(--muted)" />
         </a>
 
-        <p class="muted" style="margin-top: 14px">{{ rhythm().description }}</p>
+        @if (rhythm().description) {
+          <p class="muted" style="margin-top: 14px">{{ rhythm().description }}</p>
+        }
+
+        <div class="chip-row" style="margin-top: 16px">
+          @if (isCustom()) {
+            <a class="action-btn" style="height: 48px" [routerLink]="['/editeur', rhythm().id]">
+              <app-icon name="edit" [size]="18" />
+              <span>Modifier</span>
+            </a>
+            <button class="action-btn" style="height: 48px" type="button" (click)="share()">
+              <app-icon name="share" [size]="18" />
+              <span>Partager</span>
+            </button>
+          } @else {
+            <a class="action-btn" style="height: 48px" routerLink="/editeur" [queryParams]="{ depuis: rhythm().id }">
+              <app-icon name="copy" [size]="18" />
+              <span>Créer une variante</span>
+            </a>
+          }
+        </div>
       </div>
 
       <div class="bottom-bar">
@@ -101,6 +124,8 @@ export class PlayerPage {
   readonly player = inject(PlayerService);
   private readonly settings = inject(SettingsService);
   private readonly router = inject(Router);
+  private readonly library = inject(RhythmLibrary);
+  private readonly toast = inject(ToastService);
 
   readonly gridLeft = GRID_LEFT;
   readonly countIn = signal(false);
@@ -109,7 +134,8 @@ export class PlayerPage {
   /** Mesures de groove enchaînées depuis le dernier break : donne la phase des patterns multi-mesures. */
   private grooveRun = 0;
 
-  readonly rhythm = computed(() => getRhythm(this.id()));
+  readonly rhythm = computed(() => this.library.get(this.id()));
+  readonly isCustom = computed(() => this.library.isCustom(this.rhythm().id));
   readonly cycle = computed(() => grooveCycle(this.rhythm()));
   /** Mesure du groove en cours d'affichage (0 à l'arrêt). */
   readonly phase = computed(() => {
@@ -190,6 +216,15 @@ export class PlayerPage {
     this.queuedBreak = { bars, start: null };
     this.breakPending.set(true);
     if (!this.player.playing()) void this.player.play();
+  }
+
+  async share(): Promise<void> {
+    try {
+      const result = await shareRhythm(this.rhythm());
+      if (result === 'copied') this.toast.show('Lien copié, colle-le dans ta conversation');
+    } catch {
+      this.toast.show('Impossible de partager ce rythme');
+    }
   }
 
   openInstrument(instrumentId: string): void {
