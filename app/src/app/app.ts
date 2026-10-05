@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { SwUpdate } from '@angular/service-worker';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
+import { PlayerService } from './audio/player.service';
 import { SettingsService } from './state/settings.service';
 import { ToastService } from './state/toast.service';
 
@@ -25,8 +27,28 @@ export class App {
   // Instancié dès le démarrage pour charger les réglages persistés.
   private readonly settings = inject(SettingsService);
   readonly toast = inject(ToastService);
+  private readonly player = inject(PlayerService);
+  private readonly swUpdate = inject(SwUpdate);
+  private updateWaiting = false;
 
   constructor() {
+    // Version web installée : dès qu'une nouvelle version est prête, on recharge la page (même adresse,
+    // fragment compris), sauf pendant une lecture où l'on attend l'arrêt. Sans ça, un lien vers une page
+    // ajoutée récemment (ex. /import#…) serait ouvert par l'ancienne version en cache.
+    if (this.swUpdate.isEnabled) {
+      this.swUpdate.versionUpdates.subscribe((event) => {
+        if (event.type !== 'VERSION_READY') return;
+        if (!this.player.playing()) {
+          document.location.reload();
+        } else if (!this.updateWaiting) {
+          this.updateWaiting = true;
+          this.toast.show('Nouvelle version prête : elle s’appliquera à l’arrêt de la lecture', 4000);
+          this.player.sequencer.subscribe({ onStop: () => document.location.reload() });
+        }
+      });
+    }
+
+
     if (Capacitor.isNativePlatform()) {
       void StatusBar.setStyle({ style: Style.Dark }).catch(() => undefined);
       if (Capacitor.getPlatform() === 'android') {
