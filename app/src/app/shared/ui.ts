@@ -26,7 +26,8 @@ import { Icon } from './icon';
     </header>
   `,
   styles: `
-    .header { display: flex; align-items: center; gap: 12px; padding-left: 20px; padding-right: 20px; }
+    :host { display: block; }
+    .header { display: flex; align-items: center; gap: 12px; padding-left: var(--gutter); padding-right: var(--gutter); }
     .header__title { font-family: var(--font-display); font-weight: 800; font-size: 22px; letter-spacing: -0.02em;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .header__sub { margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

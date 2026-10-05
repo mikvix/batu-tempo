@@ -41,6 +41,19 @@ import { Icon } from '../shared/icon';
     .tabs__item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; padding: 6px 0;
       color: var(--muted); font-size: 11px; font-weight: 600; }
     .tabs__item--active { color: var(--accent); }
+
+    /* Tablette et desktop : la barre d'onglets devient un rail vertical à gauche. */
+    @media (min-width: 768px) {
+      .shell { flex-direction: row; }
+      .tabs { order: -1; flex-direction: column; justify-content: flex-start; gap: 6px; width: 96px; flex: 0 0 auto;
+        padding: calc(var(--safe-top) + 24px) 8px 24px; border-top: none; border-right: 1px solid var(--border-soft); }
+      .tabs__item { width: 100%; padding: 12px 0; border-radius: 14px; }
+      .tabs__item--active { background: var(--surface); }
+    }
+    @media (hover: hover) {
+      .tabs__item:hover { color: var(--text); }
+      .tabs__item--active:hover { color: var(--accent); }
+    }
   `,
 })
 export class TabsShell {

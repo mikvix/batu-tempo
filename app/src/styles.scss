@@ -82,6 +82,26 @@ p {
 
 /* ---------- Mise en page ---------- */
 
+/* Largeur maximale du contenu et marge latérale : 20 px sur téléphone, puis le contenu se centre
+   dans une colonne de 720 px (tablette) ou 960 px (grand écran). Le pourcentage est résolu là où
+   la variable est utilisée, donc par rapport à la largeur du conteneur qui défile. */
+:root {
+  --content-max: 100%;
+  --gutter: max(20px, calc((100% - var(--content-max)) / 2));
+}
+
+@media (min-width: 768px) {
+  :root {
+    --content-max: 720px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --content-max: 960px;
+  }
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -99,7 +119,7 @@ p {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0 20px 28px;
+  padding: 0 var(--gutter) 28px;
 }
 
 /* Les pages insérées par le routeur dans la coque des onglets doivent remplir la hauteur disponible
@@ -122,8 +142,8 @@ router-outlet {
 /* En-tête fixe des onglets : reste visible pendant le défilement du contenu. */
 .page__head {
   flex: 0 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter);
   padding-bottom: 14px;
   background: var(--bg);
   overflow-x: hidden;
@@ -139,9 +159,49 @@ router-outlet {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 20px calc(var(--safe-bottom) + 20px);
+  padding: 12px var(--gutter) calc(var(--safe-bottom) + 20px);
   border-top: 1px solid var(--border-soft);
   background: var(--bg);
+}
+
+/* Listes de cartes : une colonne sur téléphone, deux ou trois sur écran large. */
+.card-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.card-grid__wide {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Plus besoin de faire déborder les rangées de filtres jusqu'au bord de l'écran. */
+  .chip-row--scroll {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .card-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Retour visuel au survol, uniquement avec une souris. */
+@media (hover: hover) {
+  .list-card:hover,
+  .chip:hover,
+  .action-btn:hover,
+  .icon-btn:hover,
+  .pill:hover {
+    border-color: var(--muted);
+  }
 }
 
 .row {

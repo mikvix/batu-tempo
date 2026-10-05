@@ -58,10 +58,10 @@ const ICON_COLORS: Record<ExerciseDef['id'], string> = {
       </div>
 
       <div class="page__scroll">
-        <div class="stack" style="gap: 10px; margin-top: 4px">
+        <div class="card-grid" style="margin-top: 4px">
           @for (e of list(); track e.id; let first = $first) {
             @if (first && e.id === 'break') {
-              <a class="hero" [routerLink]="['/exercice', e.id]" [queryParams]="{ rhythm: rhythm().id }">
+              <a class="hero card-grid__wide" [routerLink]="['/exercice', e.id]" [queryParams]="{ rhythm: rhythm().id }">
                 <div class="row row--between">
                   <div class="row">
                     <span class="badge" style="background: var(--break); color: var(--on-break)">BREAK</span>

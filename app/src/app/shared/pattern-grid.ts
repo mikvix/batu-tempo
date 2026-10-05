@@ -24,6 +24,8 @@ import { Icon } from './icon';
   styles: `
     /* Les cellules se partagent la largeur disponible : la grille ne déborde jamais de l'écran. */
     .cell { display: block; border-radius: 3px; flex: 1 1 0; min-width: 4px; max-width: 18px; }
+    /* Sur tablette et desktop, les cases s'élargissent pour occuper la colonne de contenu. */
+    @media (min-width: 768px) { .cell { max-width: 34px; border-radius: 4px; } }
     .cell--current { outline: 2px solid var(--text); outline-offset: -2px; }
   `,
 })
@@ -65,6 +67,7 @@ export class StepCells {
   `,
   styles: `
     .tick { display: block; text-align: center; font-weight: 700; font-size: 10px; flex: 1 1 0; min-width: 4px; max-width: 18px; }
+    @media (min-width: 768px) { .tick { max-width: 34px; font-size: 11px; } }
   `,
 })
 export class BeatRuler {

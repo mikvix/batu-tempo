@@ -43,7 +43,7 @@ import { SettingsService } from '../state/settings.service';
             <span class="muted">{{ group.rhythms.length }} {{ group.rhythms.length > 1 ? 'rythmes' : 'rythme' }}</span>
           </div>
 
-          <div class="stack" style="gap: 10px">
+          <div class="card-grid card-grid--3">
             @for (r of group.rhythms; track r.id) {
               <a class="list-card" [routerLink]="['/rythme', r.id]">
                 <span class="monogram">{{ short(r) }}</span>
