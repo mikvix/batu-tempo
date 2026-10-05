@@ -11,6 +11,7 @@ import { TempoControl } from '../shared/tempo-control';
 import { Header, PlayButton } from '../shared/ui';
 import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
+import { ConfirmService } from '../state/confirm.service';
 import { ToastService } from '../state/toast.service';
 
 @Component({
@@ -95,6 +96,9 @@ import { ToastService } from '../state/toast.service';
               <app-icon name="share" [size]="18" />
               <span>Partager</span>
             </button>
+            <button class="action-btn" style="height: 48px; flex: 0 0 48px; padding: 0" type="button" aria-label="Supprimer ce rythme" (click)="remove()">
+              <app-icon name="trash" [size]="18" />
+            </button>
           } @else {
             <a class="action-btn" style="height: 48px" routerLink="/editeur" [queryParams]="{ depuis: rhythm().id }">
               <app-icon name="copy" [size]="18" />
@@ -126,6 +130,7 @@ export class PlayerPage {
   private readonly router = inject(Router);
   private readonly library = inject(RhythmLibrary);
   private readonly toast = inject(ToastService);
+  private readonly confirm = inject(ConfirmService);
 
   readonly gridLeft = GRID_LEFT;
   readonly countIn = signal(false);
@@ -225,6 +230,16 @@ export class PlayerPage {
     } catch {
       this.toast.show('Impossible de partager ce rythme');
     }
+  }
+
+  async remove(): Promise<void> {
+    const r = this.rhythm();
+    const ok = await this.confirm.ask(`Supprimer « ${r.name} » de tes rythmes ?`, { confirmLabel: 'Supprimer', danger: true });
+    if (!ok) return;
+    this.player.stop();
+    this.library.remove(r.id);
+    this.toast.show('Rythme supprimé');
+    void this.router.navigate(['/'], { replaceUrl: true });
   }
 
   openInstrument(instrumentId: string): void {

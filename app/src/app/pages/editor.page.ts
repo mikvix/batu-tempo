@@ -10,6 +10,7 @@ import { NEXT_VELOCITY, StepEditor } from '../shared/step-editor';
 import { TempoControl } from '../shared/tempo-control';
 import { Header, PlayButton } from '../shared/ui';
 import { RhythmLibrary } from '../state/rhythm-library.service';
+import { ConfirmService } from '../state/confirm.service';
 import { ToastService } from '../state/toast.service';
 
 interface DraftInstrument {
@@ -281,6 +282,7 @@ export class EditorPage implements OnDestroy {
   private readonly library = inject(RhythmLibrary);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly confirm = inject(ConfirmService);
 
   readonly presets = INSTRUMENT_PRESETS;
   readonly barChoices = BAR_CHOICES;
@@ -343,8 +345,9 @@ export class EditorPage implements OnDestroy {
   }
 
   /** Utilisé par le garde de route : confirmation si des modifications ne sont pas enregistrées. */
-  canLeave(): boolean {
-    return !this.dirty() || confirm('Quitter sans enregistrer les modifications ?');
+  canLeave(): boolean | Promise<boolean> {
+    if (!this.dirty()) return true;
+    return this.confirm.ask('Quitter sans enregistrer les modifications ?', { confirmLabel: 'Quitter', danger: true });
   }
 
   value(event: Event): string {
@@ -485,9 +488,11 @@ export class EditorPage implements OnDestroy {
     }
   }
 
-  remove(): void {
+  async remove(): Promise<void> {
     const id = this.draft().id;
-    if (!id || !confirm(`Supprimer « ${this.draft().name} » de tes rythmes ?`)) return;
+    if (!id) return;
+    const ok = await this.confirm.ask(`Supprimer « ${this.draft().name} » de tes rythmes ?`, { confirmLabel: 'Supprimer', danger: true });
+    if (!ok) return;
     this.library.remove(id);
     this.dirty.set(false);
     this.toast.show('Rythme supprimé');
