@@ -1,7 +1,9 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { Preferences } from '@capacitor/preferences';
 
 import { RHYTHMS } from '../data/rhythms';
+import { readJson, writeJson } from './storage';
+
+export type InputMode = 'micro' | 'toucher';
 
 export interface Settings {
   lastRhythmId: string;
@@ -10,6 +12,14 @@ export interface Settings {
   /** rhythmId → bpm choisi */
   bpm: Record<string, number>;
   grooveBars: number;
+  /** Décalage total mesuré au réglage du micro (sortie + entrée), en ms. null = jamais réglé. */
+  micLatencyMs: number | null;
+  /** Sensibilité de la détection des frappes, de 1 (peu sensible) à 5 (très sensible). */
+  micSensitivity: number;
+  /** Écoute au casque : le micro n'entend que l'instrument, l'app peut jouer plus fort. */
+  headphones: boolean;
+  /** Comment les frappes sont captées dans les exercices guidés. */
+  inputMode: InputMode;
 }
 
 const KEY = 'batu-tempo.settings.v1';
@@ -19,39 +29,26 @@ const DEFAULTS: Settings = {
   myInstrument: { 'samba-reggae': 'caixa' },
   bpm: {},
   grooveBars: 8,
+  micLatencyMs: null,
+  micSensitivity: 3,
+  headphones: false,
+  inputMode: 'micro',
 };
 
-/** Réglages persistés (Preferences de Capacitor : localStorage sur le web, stockage natif sur mobile). */
+/** Réglages persistés dans le localStorage du navigateur. */
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  readonly settings = signal<Settings>(DEFAULTS);
-  readonly loaded = signal(false);
+  readonly settings = signal<Settings>({ ...DEFAULTS, ...(readJson<Partial<Settings>>(KEY) ?? {}) });
 
   readonly lastRhythmId = computed(() => this.settings().lastRhythmId);
   readonly grooveBars = computed(() => this.settings().grooveBars);
-
-  constructor() {
-    void this.load();
-  }
-
-  async load(): Promise<void> {
-    try {
-      const { value } = await Preferences.get({ key: KEY });
-      if (value) {
-        this.settings.set({ ...DEFAULTS, ...(JSON.parse(value) as Partial<Settings>) });
-      }
-    } catch {
-      // réglages par défaut
-    }
-    this.loaded.set(true);
-  }
 
   update(patch: Partial<Settings> | ((s: Settings) => Partial<Settings>)): void {
     const current = this.settings();
     const p = typeof patch === 'function' ? patch(current) : patch;
     const next = { ...current, ...p };
     this.settings.set(next);
-    void Preferences.set({ key: KEY, value: JSON.stringify(next) });
+    writeJson(KEY, next);
   }
 
   myInstrumentFor(rhythmId: string): string | undefined {

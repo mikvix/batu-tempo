@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
-import { Capacitor } from '@capacitor/core';
-import { StatusBar, Style } from '@capacitor/status-bar';
 
 import { PlayerService } from './audio/player.service';
 import { ConfirmService } from './state/confirm.service';
@@ -70,14 +68,6 @@ export class App {
           this.player.sequencer.subscribe({ onStop: () => document.location.reload() });
         }
       });
-    }
-
-
-    if (Capacitor.isNativePlatform()) {
-      void StatusBar.setStyle({ style: Style.Dark }).catch(() => undefined);
-      if (Capacitor.getPlatform() === 'android') {
-        void StatusBar.setBackgroundColor({ color: '#141216' }).catch(() => undefined);
-      }
     }
   }
 }

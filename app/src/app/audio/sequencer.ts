@@ -56,6 +56,8 @@ export class Sequencer {
   /** Volume appliqué à tous les instruments sauf `mineId` (pour "groupe en fond") */
   othersVolume = 1;
   mineId: string | null = null;
+  /** Instant (horloge audio, en secondes) où commence la mesure 0 de la lecture en cours. */
+  startTime = 0;
 
   private provider: BarProvider = () => null;
   private nextTime = 0;
@@ -102,6 +104,7 @@ export class Sequencer {
     this.bar = 0;
     this.spec = null;
     this.nextTime = ctx.currentTime + 0.08;
+    this.startTime = this.nextTime;
     this.tick();
     this.timer = setInterval(() => this.tick(), TICK_MS);
   }

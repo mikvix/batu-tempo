@@ -1,32 +1,27 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { Preferences } from '@capacitor/preferences';
 
 import { sanitizeRhythm } from '../data/custom';
 import { RHYTHMS } from '../data/rhythms';
 import { RhythmDef } from '../data/types';
+import { readJson, writeJson } from './storage';
 
 const KEY = 'batu-tempo.custom.v1';
 
+function loadCustom(): RhythmDef[] {
+  const list = readJson<unknown[]>(KEY);
+  return Array.isArray(list) ? list.map(sanitizeRhythm).filter((r): r is RhythmDef => r !== null) : [];
+}
+
 /**
  * Tous les rythmes de l'app : ceux livrés dans rhythms.json, plus les rythmes personnels
- * créés dans l'éditeur ou importés par lien, stockés sur l'appareil.
+ * créés dans l'éditeur ou importés par lien, stockés dans le navigateur.
  */
 @Injectable({ providedIn: 'root' })
 export class RhythmLibrary {
-  readonly custom = signal<RhythmDef[]>([]);
+  /** Lu de façon synchrone à la création : un lien direct vers /rythme/perso-… trouve tout de suite son rythme. */
+  readonly custom = signal<RhythmDef[]>(loadCustom());
   readonly builtin = RHYTHMS;
   readonly all = computed(() => [...this.custom(), ...RHYTHMS]);
-
-  /** Chargé avant le démarrage de l'app (voir app.config.ts), pour que les liens directs fonctionnent. */
-  async load(): Promise<void> {
-    try {
-      const { value } = await Preferences.get({ key: KEY });
-      const list = value ? (JSON.parse(value) as unknown[]) : [];
-      this.custom.set(list.map(sanitizeRhythm).filter((r): r is RhythmDef => r !== null));
-    } catch {
-      this.custom.set([]);
-    }
-  }
 
   get(id: string | undefined): RhythmDef {
     return this.custom().find((r) => r.id === id) ?? RHYTHMS.find((r) => r.id === id) ?? RHYTHMS[0];
@@ -53,6 +48,6 @@ export class RhythmLibrary {
 
   private persist(list: RhythmDef[]): void {
     this.custom.set(list);
-    void Preferences.set({ key: KEY, value: JSON.stringify(list) });
+    writeJson(KEY, list);
   }
 }

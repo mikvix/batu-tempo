@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
-import { KeepAwake } from '@capacitor-community/keep-awake';
 
 import { parsePattern, RhythmDef, Velocity, VoiceId } from '../data/types';
 import { BarProvider, BarSpec, Sequencer } from './sequencer';
+import { allowSleep, keepAwake } from './wake-lock';
 
 export function buildBarSpec(
   rhythm: RhythmDef,
@@ -49,7 +49,7 @@ export class PlayerService {
       onStop: () => {
         this.playing.set(false);
         this.step.set(-1);
-        void KeepAwake.allowSleep().catch(() => undefined);
+        allowSleep();
       },
       onBpm: (bpm) => this.bpm.set(bpm),
     });
@@ -73,15 +73,15 @@ export class PlayerService {
     this.playing.set(true);
     this.step.set(-1);
     this.bar.set(0);
-    // L'écran reste allumé pendant qu'on joue : une WebView suspendue coupe le son.
-    void KeepAwake.keepAwake().catch(() => undefined);
+    // L'écran reste allumé pendant qu'on joue : un téléphone en veille couperait le son.
+    void keepAwake();
   }
 
   stop(): void {
     this.sequencer.stop();
     this.playing.set(false);
     this.step.set(-1);
-    void KeepAwake.allowSleep().catch(() => undefined);
+    allowSleep();
   }
 
   toggle(): void {

@@ -1,15 +1,17 @@
 # Batu Tempo
 
-Application mobile (Android / iOS) pour s'entraîner à la batucada : lancer un rythme, isoler ou couper chaque instrument, ralentir sa propre partie, et travailler les breaks et les reprises sur le tempo.
+Application web (PWA) pour s'entraîner à la batucada : lancer un rythme, isoler ou couper chaque instrument, ralentir sa propre partie, et travailler les breaks et les reprises sur le tempo.
 
-Stack : **Angular 21** (standalone, signaux, zoneless) + **Capacitor 8**. Le son est produit par la Web Audio API du navigateur ou de la WebView, entièrement synthétisé (aucun sample).
+Stack : **Angular 21** (standalone, signaux, zoneless), installable comme PWA. Le son est produit par la Web Audio API du navigateur, entièrement synthétisé (aucun sample).
+
+En ligne : https://mikvix.github.io/batu-tempo/
 
 ## Contenu du dépôt
 
 | Dossier | Rôle |
 | --- | --- |
-| `app/` | L'application Angular + Capacitor. |
-| `maquette/` | La maquette cliquable d'origine (artboards HTML du canvas de design). |
+| `app/` | L'application Angular. |
+| `maquette/` | Les maquettes cliquables (artboards HTML du canvas de design). |
 
 ## Lancer l'app
 
@@ -21,7 +23,7 @@ npm start            # http://localhost:4200, le son marche directement dans le 
 
 ### Version web (PWA)
 
-`npm run build:web` produit un site statique dans `app/dist/batu-tempo/browser`, à déposer tel quel sur un hébergement statique. C'est une PWA : manifeste, icônes, et service worker qui met l'app en cache pour qu'elle fonctionne hors ligne et puisse s'installer sur l'écran d'accueil depuis le navigateur (« Ajouter à l'écran d'accueil »). Le service worker n'est actif qu'en production, servi en HTTPS (ou sur `localhost`).
+`npm run build` produit un site statique dans `app/dist/batu-tempo/browser`, à déposer tel quel sur un hébergement statique. C'est une PWA : manifeste, icônes, et service worker qui met l'app en cache pour qu'elle fonctionne hors ligne et puisse s'installer sur l'écran d'accueil depuis le navigateur (« Ajouter à l'écran d'accueil »). Le service worker n'est actif qu'en production, servi en HTTPS (ou sur `localhost`).
 
 L'app utilise des URL propres : l'hébergeur doit renvoyer `index.html` pour toute route inconnue. Le fichier `public/_redirects` le fait pour Netlify et Cloudflare Pages ; pour Vercel, ajouter un `vercel.json` avec une règle `rewrites` vers `/index.html` ; pour nginx, `try_files $uri /index.html`. Pour GitHub Pages, copier `index.html` en `404.html` dans le dossier publié. Si le site n'est pas à la racine du domaine, construire avec `ng build --base-href /sous-dossier/`.
 
@@ -30,35 +32,6 @@ Pour tester la PWA en local comme en production : `npm run serve:web` puis http:
 #### GitHub Pages
 
 Le workflow `.github/workflows/pages.yml` construit et déploie le site à chaque push sur `main`, à l'adresse https://mikvix.github.io/batu-tempo/. Il construit avec `--base-href /batu-tempo/` et copie `index.html` en `404.html` pour que les routes profondes fonctionnent. À faire une fois dans les réglages du dépôt : Settings → Pages → Source = « GitHub Actions ». Sur un compte gratuit, GitHub Pages n'est disponible que pour un dépôt public.
-
-### Android
-
-Prérequis : Android Studio (ou au moins le SDK), `ANDROID_HOME` défini, un **JDK 21** (Capacitor 8 l'exige ; celui embarqué dans Android Studio convient : `JAVA_HOME = C:\Program Files\Android\Android Studio\jbr`), un téléphone en débogage USB ou un émulateur.
-
-```bash
-npm run android      # build Angular + cap sync + installation et lancement sur l'appareil
-npm run android:open # ouvre le projet natif dans Android Studio
-```
-
-L'APK de debug se trouve ensuite dans `app/android/app/build/outputs/apk/debug/app-debug.apk`.
-
-### iOS
-
-Nécessite un Mac avec Xcode : `npx cap add ios` une fois, puis `npm run ios`. Point à traiter avant une mise en production : dans une WebView, l'interrupteur silence de l'iPhone coupe le son Web Audio ; il faut un petit plugin natif qui passe la session audio en catégorie « playback ».
-
-### Windows avec un nom d'utilisateur accentué
-
-Si le dossier utilisateur contient un accent (ex. `C:\Users\MichaëlBerthoix`), le JDK 17 ne parvient plus à ouvrir ses pipes internes et Gradle échoue avec « Unable to establish loopback connection ». Donner à la JVM un dossier temporaire ASCII règle le problème, et déplacer le cache Gradle évite le même souci dans les scripts générés par le plugin Android :
-
-```powershell
-New-Item -ItemType Directory -Force C:\dev\.jtmp, C:\dev\.gradle-home | Out-Null
-$env:JAVA_TOOL_OPTIONS = "-Djdk.net.unixdomain.tmpdir=C:\dev\.jtmp"
-$env:GRADLE_USER_HOME = "C:\dev\.gradle-home"
-$env:ANDROID_HOME = "C:\Android"
-$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
-```
-
-Ces variables peuvent être définies une fois pour toutes dans les variables d'environnement utilisateur de Windows (Android Studio les lit aussi, après redémarrage). Dans Android Studio, « Gradle user home » se règle dans Settings → Build Tools → Gradle.
 
 ## Architecture
 
@@ -84,21 +57,21 @@ app/src/app/
     rhythms.ts               Chargement, vérification et tri du JSON
     exercises.ts             Catalogue des exercices
     types.ts                 Types et parseur de patterns
-  state/settings.service.ts  Réglages persistés (Capacitor Preferences)
+  state/settings.service.ts  Réglages persistés (localStorage)
   shared/                    Icônes SVG, en-tête, bouton lecture, contrôle de tempo, grilles
 ```
 
 Le séquenceur est unique pour toute l'app : la lecture continue quand on change d'écran, et chaque page installe simplement son fournisseur de mesures. Les notes sont planifiées 140 ms à l'avance sur l'horloge audio, ce qui donne un tempo stable même si le JavaScript a un peu de retard.
 
-## Icône et splash screen
+## Icônes
 
-La source unique est `app/assets/logo.png` (carré, 1024 px). `npm run assets` en dérive l'icône classique, l'icône adaptative Android (visuel réduit dans la zone sûre sur fond sombre), le splash screen et le favicon, puis produit toutes les tailles dans `android/app/src/main/res` via `@capacitor/assets`. Pour changer de visuel, remplace ce fichier et relance la commande. `npm run logo:draw` régénère à la place un visuel dessiné en SVG (`app/scripts/make-logo.mjs`), utile si l'on veut repartir d'une base vectorielle.
+La source unique est `app/assets/logo.png` (carré, 1024 px). `npm run assets` en dérive le favicon, l'icône d'écran d'accueil iOS et les icônes du manifeste de la PWA, dont une version « maskable » où le visuel est réduit dans la zone sûre sur fond sombre. Pour changer de visuel, remplace ce fichier et relance la commande.
 
 ## Créer et partager des rythmes depuis l'app
 
 Depuis l'accueil, « Créer un rythme » ouvre l'éditeur : nom, niveau, tempo, longueur du groove (1, 2 ou 4 mesures) et du break (1 ou 2 mesures), puis une grille par instrument où chaque case tourne au toucher entre silence, frappe, accent et ghost. La lecture joue le brouillon en direct : une case modifiée s'entend dès la mesure suivante. Sur un rythme livré, « Créer une variante » ouvre l'éditeur prérempli.
 
-Les rythmes créés sont enregistrés sur l'appareil (section « Mes rythmes » de l'accueil) et utilisables partout : lecteur, décomposition, exercices. « Partager » produit un lien `…/batu-tempo/import#…` qui contient tout le rythme, compressé dans le fragment de l'URL : aucun serveur n'est sollicité, et la personne qui ouvre le lien peut écouter le rythme puis l'ajouter à ses propres rythmes. Pour intégrer un rythme au catalogue livré avec l'app, il suffit de recopier son contenu dans `rhythms.json`.
+Les rythmes créés sont enregistrés dans le navigateur (section « Mes rythmes » de l'accueil) et utilisables partout : lecteur, décomposition, exercices. « Partager » produit un lien `…/batu-tempo/import#…` qui contient tout le rythme, compressé dans le fragment de l'URL : aucun serveur n'est sollicité, et la personne qui ouvre le lien peut écouter le rythme puis l'ajouter à ses propres rythmes. Pour intégrer un rythme au catalogue livré avec l'app, il suffit de recopier son contenu dans `rhythms.json`.
 
 Code concerné : `pages/editor.page.ts`, `pages/import.page.ts`, `shared/step-editor.ts`, `data/custom.ts` (conversion, validation des données reçues), `data/share.ts` (encodage du lien), `state/rhythm-library.service.ts` (rythmes livrés + personnels).
 

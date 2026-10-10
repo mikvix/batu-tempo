@@ -1,10 +1,5 @@
-import { Capacitor } from '@capacitor/core';
-
 import { minifyRhythm } from './custom';
 import { RhythmDef } from './types';
-
-/** Adresse publique de la version web, utilisée pour les liens créés depuis l'app native. */
-export const PUBLIC_URL = 'https://mikvix.github.io/batu-tempo/';
 
 function toBase64Url(bytes: Uint8Array): string {
   let bin = '';
@@ -54,8 +49,7 @@ export async function decodeRhythm(code: string): Promise<unknown> {
 
 /** Lien complet à partager : l'app web ouvre la page d'import avec le rythme dans le fragment (#…). */
 export async function shareLink(r: RhythmDef): Promise<string> {
-  const base = Capacitor.isNativePlatform() ? PUBLIC_URL : document.baseURI;
-  return new URL('import#' + (await encodeRhythm(r)), base).toString();
+  return new URL('import#' + (await encodeRhythm(r)), document.baseURI).toString();
 }
 
 /** Ouvre la feuille de partage du système si elle existe, sinon copie le lien. Renvoie ce qui a été fait. */

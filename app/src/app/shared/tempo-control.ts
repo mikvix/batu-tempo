@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 import { Icon } from './icon';
 
@@ -86,7 +85,7 @@ export class TempoControl {
     const now = Date.now();
     this.taps = this.taps.filter((t) => now - t < 2500);
     this.taps.push(now);
-    void Haptics.impact({ style: ImpactStyle.Light }).catch(() => undefined);
+    navigator.vibrate?.(10);
     if (this.taps.length >= 3) {
       const intervals = this.taps.slice(1).map((t, i) => t - this.taps[i]);
       const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
