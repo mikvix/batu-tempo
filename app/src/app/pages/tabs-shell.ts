@@ -18,6 +18,10 @@ import { Icon } from '../shared/icon';
           <app-icon name="pulse" [size]="24" />
           <span>Rythmes</span>
         </a>
+        <a routerLink="/parcours" routerLinkActive="tabs__item--active" class="tabs__item">
+          <app-icon name="route" [size]="24" />
+          <span>Parcours</span>
+        </a>
         <a routerLink="/exercices" routerLinkActive="tabs__item--active" class="tabs__item">
           <app-icon name="target" [size]="24" />
           <span>Exercices</span>
@@ -38,7 +42,7 @@ import { Icon } from '../shared/icon';
     .shell__content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
     .tabs { display: flex; justify-content: space-around; padding: 10px 8px calc(var(--safe-bottom) + 12px);
       border-top: 1px solid var(--border-soft); background: var(--tabbar); }
-    .tabs__item { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 80px; padding: 6px 0;
+    .tabs__item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1 1 0; max-width: 80px; min-width: 0; padding: 6px 0;
       color: var(--muted); font-size: 11px; font-weight: 600; }
     .tabs__item--active { color: var(--accent); }
 
@@ -47,7 +51,7 @@ import { Icon } from '../shared/icon';
       .shell { flex-direction: row; }
       .tabs { order: -1; flex-direction: column; justify-content: flex-start; gap: 6px; width: 96px; flex: 0 0 auto;
         padding: calc(var(--safe-top) + 24px) 8px 24px; border-top: none; border-right: 1px solid var(--border-soft); }
-      .tabs__item { width: 100%; padding: 12px 0; border-radius: 14px; }
+      .tabs__item { flex: none; width: 100%; max-width: none; padding: 12px 0; border-radius: 14px; }
       .tabs__item--active { background: var(--surface); }
     }
     @media (hover: hover) {

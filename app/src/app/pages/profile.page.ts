@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
+import { Icon } from '../shared/icon';
 import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
 
 @Component({
   selector: 'app-profile-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink, Icon],
   template: `
     <div class="page">
       <div class="page__head page__top">
@@ -56,8 +59,18 @@ import { SettingsService } from '../state/settings.service';
           </div>
         </div>
 
+        <p class="label" style="margin-top: 26px">Micro</p>
+        <a class="list-card" style="margin-top: 10px" routerLink="/micro" [queryParams]="{ retour: '/profil' }">
+          <span class="icon-box" style="color: var(--reprise)"><app-icon name="mic" /></span>
+          <div class="grow stack" style="gap: 2px">
+            <span class="strong">Réglage du micro</span>
+            <span class="muted small">{{ micSummary() }}</span>
+          </div>
+          <app-icon name="chevron-right" [size]="18" style="color: var(--muted)" />
+        </a>
+
         <div class="card stack" style="margin-top: 16px; gap: 6px">
-          <span class="strong">Batu Tempo · version 0.1</span>
+          <span class="strong">Batu Tempo · version 0.2</span>
           <span class="muted">Tous les sons sont synthétisés dans l'app, sans samples. Crée tes propres rythmes depuis l'accueil ; les rythmes livrés sont dans src/app/data/rhythms.json.</span>
         </div>
       </div>
@@ -73,4 +86,10 @@ export class ProfilePage {
   readonly rhythms = this.library.all;
   readonly rhythm = computed(() => this.library.get(this.settings.lastRhythmId()));
   readonly mine = computed(() => this.settings.myInstrumentFor(this.rhythm().id));
+  readonly micSummary = computed(() => {
+    const s = this.settings.settings();
+    if (s.inputMode === 'toucher') return 'Exercices au toucher';
+    if (s.micLatencyMs === null) return 'Pas encore réglé';
+    return `Décalage ${s.micLatencyMs} ms · sensibilité ${s.micSensitivity} · ${s.headphones ? 'au casque' : 'sans casque'}`;
+  });
 }

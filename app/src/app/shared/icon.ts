@@ -31,7 +31,15 @@ export type IconName =
   | 'share'
   | 'edit'
   | 'trash'
-  | 'copy';
+  | 'copy'
+  | 'mic'
+  | 'star'
+  | 'flame'
+  | 'lock'
+  | 'check'
+  | 'route'
+  | 'headphones'
+  | 'close';
 
 /** Icônes en SVG inline (traits), colorées par `currentColor`. */
 @Component({
@@ -164,6 +172,35 @@ export type IconName =
         @case ('copy') {
           <rect x="9" y="9" width="12" height="12" rx="2" />
           <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+        }
+        @case ('mic') {
+          <rect x="9" y="3" width="6" height="11" rx="3" />
+          <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+        }
+        @case ('star') {
+          <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" />
+        }
+        @case ('flame') {
+          <path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5.3 2 1.3 3 2.5 3.5C11 9 11 5 12 2z" />
+        }
+        @case ('lock') {
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+        }
+        @case ('check') {
+          <path d="m5 12 5 5 9-10" />
+        }
+        @case ('route') {
+          <path d="M4 20h4l2-8 4 6 2-4h4" />
+          <circle cx="20" cy="6" r="2" />
+        }
+        @case ('headphones') {
+          <path d="M3 14v-2a9 9 0 0 1 18 0v2" />
+          <rect x="3" y="14" width="4" height="7" rx="1.5" />
+          <rect x="17" y="14" width="4" height="7" rx="1.5" />
+        }
+        @case ('close') {
+          <path d="M6 6l12 12M18 6 6 18" />
         }
       }
     </svg>

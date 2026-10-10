@@ -89,6 +89,27 @@ const ICON_COLORS: Record<ExerciseDef['id'], string> = {
             }
           }
         </div>
+
+        <div class="section-row">
+          <div class="row" style="gap: 8px">
+            <h2 class="title">Avec le micro</h2>
+            <app-icon name="mic" [size]="18" style="color: var(--reprise)" />
+          </div>
+          <a class="muted small" routerLink="/micro" [queryParams]="{ retour: '/exercices' }" style="color: var(--accent); font-weight: 700">Régler le micro</a>
+        </div>
+        <p class="muted" style="margin: -4px 0 12px">Joue sur ton instrument : le téléphone écoute et juge chaque frappe. Sans instrument, ils se jouent aussi au toucher.</p>
+        <div class="card-grid">
+          @for (m of micExercises(); track m.title) {
+            <a class="list-card" [routerLink]="m.path" [queryParams]="m.query">
+              <span class="icon-box" [style.color]="m.color"><app-icon [name]="m.icon" /></span>
+              <div class="grow stack" style="gap: 3px">
+                <span class="strong">{{ m.title }}</span>
+                <span class="muted">{{ m.text }}</span>
+              </div>
+              <app-icon name="chevron-right" [size]="18" style="color: var(--muted)" />
+            </a>
+          }
+        </div>
       </div>
     </div>
   `,
@@ -109,6 +130,15 @@ export class ExercisesPage {
   readonly pick = signal(false);
 
   readonly rhythm = computed(() => this.library.get(this.settings.lastRhythmId()));
+  readonly micExercises = computed(() => {
+    const r = this.rhythm();
+    const inst = this.settings.myInstrumentFor(r.id) ?? r.instruments[0].id;
+    return [
+      { title: 'Suis le rythme', text: 'Les notes défilent : frappe quand elles touchent la ligne', icon: 'target' as IconName, color: 'var(--accent)', path: ['/jeu', r.id], query: { inst, vitesse: 70, mesures: 8 } },
+      { title: 'Appel et réponse', text: 'Le repique appelle, rejoue le même dessin', icon: 'megaphone' as IconName, color: 'var(--blue)', path: ['/appel', r.id], query: { inst } },
+      { title: 'Tiens le tempo seul', text: 'Le groupe se tait huit mesures, tu continues sans dériver', icon: 'metronome' as IconName, color: 'var(--reprise)', path: ['/defi-tempo', r.id], query: { inst } },
+    ];
+  });
   readonly list = computed(() => EXERCISES.filter((e) => this.filter() === 'Tous' || e.tags.includes(this.filter())));
 
   chooseRhythm(id: string): void {

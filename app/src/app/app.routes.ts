@@ -12,6 +12,7 @@ export const routes: Routes = [
     component: TabsShell,
     children: [
       { path: '', loadComponent: () => import('./pages/rhythms.page').then((m) => m.RhythmsPage) },
+      { path: 'parcours', loadComponent: () => import('./pages/parcours.page').then((m) => m.ParcoursPage) },
       { path: 'exercices', loadComponent: () => import('./pages/exercises.page').then((m) => m.ExercisesPage) },
       { path: 'metronome', loadComponent: () => import('./pages/metronome.page').then((m) => m.MetronomePage) },
       { path: 'profil', loadComponent: () => import('./pages/profile.page').then((m) => m.ProfilePage) },
@@ -33,6 +34,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/editor.page').then((m) => m.EditorPage),
     canDeactivate: [leaveEditor],
   },
+  { path: 'micro', loadComponent: () => import('./pages/mic-setup.page').then((m) => m.MicSetupPage) },
+  { path: 'jeu/:rhythm', loadComponent: () => import('./pages/game.page').then((m) => m.GamePage) },
+  { path: 'appel/:rhythm', loadComponent: () => import('./pages/call.page').then((m) => m.CallPage) },
+  { path: 'defi-tempo/:rhythm', loadComponent: () => import('./pages/tempo-solo.page').then((m) => m.TempoSoloPage) },
   { path: 'import', loadComponent: () => import('./pages/import.page').then((m) => m.ImportPage) },
   { path: '**', redirectTo: '' },
 ];
