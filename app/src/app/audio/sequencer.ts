@@ -172,7 +172,7 @@ export class Sequencer {
       }
     }
     if (spec.click && step % 4 === 0) {
-      playVoice(ctx, out, 'click', t, step === 0 ? 3 : 2, 0.8);
+      playVoice(ctx, out, 'click', t, step === 0 ? 3 : 2, 1);
     }
     if (spec.bell && step === 0) {
       playVoice(ctx, out, 'bell', t, 3, 0.9);

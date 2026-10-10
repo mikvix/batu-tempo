@@ -10,13 +10,17 @@ export interface RawHit {
   strength: number;
 }
 
-/** Sensibilité 1 à 5 → seuil absolu et rapport au bruit de fond du détecteur. */
+/**
+ * Sensibilité 1 à 5 → seuil absolu (niveau de l'attaque, après passe-haut à 1,2 kHz) et rapport exigé
+ * entre l'attaque et le niveau ambiant juste avant. Repère : un surdo frappé normalement au micro-casque
+ * donne des attaques entre 0,06 et 0,1 ; une caixa ou un agogô, bien plus.
+ */
 const SENSITIVITY: Record<number, { threshold: number; ratio: number }> = {
-  1: { threshold: 0.25, ratio: 6 },
-  2: { threshold: 0.15, ratio: 5 },
-  3: { threshold: 0.08, ratio: 4 },
-  4: { threshold: 0.045, ratio: 3.2 },
-  5: { threshold: 0.025, ratio: 2.6 },
+  1: { threshold: 0.08, ratio: 3 },
+  2: { threshold: 0.05, ratio: 2.75 },
+  3: { threshold: 0.03, ratio: 2.5 },
+  4: { threshold: 0.018, ratio: 2.25 },
+  5: { threshold: 0.01, ratio: 2 },
 };
 
 /**
@@ -65,7 +69,12 @@ export class MicService {
         this.moduleLoaded = true;
       }
       this.source = ctx.createMediaStreamSource(this.stream);
-      this.node = new AudioWorkletNode(ctx, 'onset-processor', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [1] });
+      this.node = new AudioWorkletNode(ctx, 'onset-processor', {
+        numberOfInputs: 1,
+        numberOfOutputs: 1,
+        outputChannelCount: [1],
+        processorOptions: SENSITIVITY[this.sensitivity],
+      });
       // Sortie muette vers la destination : garantit que le navigateur fait tourner le détecteur.
       this.sink = ctx.createGain();
       this.sink.gain.value = 0;

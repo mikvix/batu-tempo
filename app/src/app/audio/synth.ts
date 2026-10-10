@@ -140,7 +140,9 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       noise(ctx, out, t, { filter: 'highpass', freq: 5500, decay: 0.07, peak: 0.4 * v });
       break;
     case 'click':
-      tone(ctx, out, t, { type: 'sine', f0: vel === 3 ? 1650 : 1050, decay: 0.045, peak: 0.6 * v });
+      // Clic franc, audible au casque par-dessus un tambour : ton bref doublé d'un claquement.
+      tone(ctx, out, t, { type: 'triangle', f0: vel === 3 ? 1650 : 1050, decay: 0.06, peak: 0.9 * v });
+      noise(ctx, out, t, { filter: 'highpass', freq: 3000, decay: 0.02, peak: 0.6 * v });
       break;
     case 'bell':
       tone(ctx, out, t, { type: 'sine', f0: 1760, decay: 0.55, peak: 0.45 * v });

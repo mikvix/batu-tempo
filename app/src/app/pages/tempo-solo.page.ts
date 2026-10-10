@@ -201,15 +201,15 @@ export class TempoSoloPage implements OnDestroy {
   readonly now = signal(0);
   readonly targets = signal<Target[]>([]);
   readonly xp = signal(0);
-  private startTime = 0;
+  private readonly startTime = signal(0);
   private window = 0.2;
 
   readonly barLength = computed(() => (60 / this.bpm()) * 4);
-  readonly barIndex = computed(() => (this.phase() === 'playing' ? Math.floor((this.now() - this.startTime) / this.barLength()) : 0));
+  readonly barIndex = computed(() => (this.phase() === 'playing' ? Math.floor((this.now() - this.startTime()) / this.barLength()) : 0));
   readonly progress = computed(() => {
     if (this.phase() === 'ready') return 0;
     if (this.phase() === 'done') return 100;
-    const t = (this.now() - this.startTime) / this.barLength() - 1;
+    const t = (this.now() - this.startTime()) / this.barLength() - 1;
     return Math.max(0, Math.min(100, (t / TOTAL_BARS) * 100));
   });
 
@@ -352,10 +352,10 @@ export class TempoSoloPage implements OnDestroy {
     });
     await this.player.play();
 
-    this.startTime = this.player.sequencer.startTime;
-    this.hits.measureNoise(this.startTime, this.startTime + this.barLength());
+    this.startTime.set(this.player.sequencer.startTime);
+    this.hits.measureNoise(this.startTime(), this.startTime() + this.barLength());
     const sixteenth = this.barLength() / STEPS_PER_BAR;
-    const targets = buildTargets(parsePattern(mine.pattern), this.startTime, sixteenth, 1, TOTAL_BARS);
+    const targets = buildTargets(parsePattern(mine.pattern), this.startTime(), sixteenth, 1, TOTAL_BARS);
     // Fenêtre d'appariement large (la dérive peut grandir pendant le silence), sans chevaucher deux notes.
     let gap = Infinity;
     for (let i = 1; i < targets.length; i++) gap = Math.min(gap, targets[i].time - targets[i - 1].time);
@@ -369,7 +369,7 @@ export class TempoSoloPage implements OnDestroy {
   private frame(): void {
     const now = heardNow();
     this.now.set(now);
-    if (now > this.startTime + (TOTAL_BARS + 1) * this.barLength() + this.window + 0.2) this.finish();
+    if (now > this.startTime() + (TOTAL_BARS + 1) * this.barLength() + this.window + 0.2) this.finish();
   }
 
   private onHit(hit: Hit): void {

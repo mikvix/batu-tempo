@@ -211,28 +211,28 @@ export class GamePage implements OnDestroy {
   readonly lastHitAt = signal(-10);
   readonly summary = signal<Summary | null>(null);
   readonly xp = signal(0);
-  private startTime = 0;
+  private readonly startTime = signal(0);
 
   readonly sixteenth = computed(() => 60 / this.bpm() / 4);
   readonly barLength = computed(() => this.sixteenth() * STEPS_PER_BAR);
-  private readonly endTime = computed(() => this.startTime + (this.bars() + 1) * this.barLength());
+  private readonly endTime = computed(() => this.startTime() + (this.bars() + 1) * this.barLength());
 
   readonly progress = computed(() => {
     if (this.phase() === 'ready') return 0;
     if (this.phase() === 'done') return 100;
     const total = (this.bars() + 1) * this.barLength();
-    return Math.max(0, Math.min(100, ((this.now() - this.startTime) / total) * 100));
+    return Math.max(0, Math.min(100, ((this.now() - this.startTime()) / total) * 100));
   });
 
   readonly countdown = computed(() => {
     if (this.phase() !== 'playing') return null;
-    const t = this.now() - this.startTime;
+    const t = this.now() - this.startTime();
     if (t < 0 || t >= this.barLength()) return null;
     return 4 - Math.floor(t / (this.barLength() / 4));
   });
 
   readonly notes = computed(() => {
-    const now = this.phase() === 'ready' ? this.startTime : this.now();
+    const now = this.phase() === 'ready' ? this.startTime() : this.now();
     return this.targets()
       .filter((t) => t.time - now < 2.4 && now - t.time < 0.45)
       .map((t) => {
@@ -252,10 +252,10 @@ export class GamePage implements OnDestroy {
     if (this.phase() !== 'playing') return [];
     const now = this.now();
     const beat = this.barLength() / 4;
-    const first = Math.floor((now - this.startTime - 0.5) / beat);
+    const first = Math.floor((now - this.startTime() - 0.5) / beat);
     const out: { key: number; y: number; bar: boolean }[] = [];
     for (let b = first; b < first + 14; b++) {
-      const y = HIT_LINE + (this.startTime + b * beat - now) * SPEED;
+      const y = HIT_LINE + (this.startTime() + b * beat - now) * SPEED;
       if (y > -10) out.push({ key: b, y, bar: b % 4 === 0 });
     }
     return out;
@@ -321,9 +321,9 @@ export class GamePage implements OnDestroy {
     this.player.setProvider((bar) => (bar === 0 ? countIn : bar <= bars ? { ...groove, phase: bar - 1 } : null));
     await this.player.play();
 
-    this.startTime = this.player.sequencer.startTime;
-    this.hits.measureNoise(this.startTime, this.startTime + this.barLength());
-    this.targets.set(buildTargets(this.pattern(), this.startTime, this.sixteenth(), 1, bars));
+    this.startTime.set(this.player.sequencer.startTime);
+    this.hits.measureNoise(this.startTime(), this.startTime() + this.barLength());
+    this.targets.set(buildTargets(this.pattern(), this.startTime(), this.sixteenth(), 1, bars));
     this.now.set(heardNow());
     this.phase.set('playing');
     this.stopLoop = startFrameLoop(() => this.frame());

@@ -47,11 +47,20 @@ app/src/app/
     player.page.ts           Lecteur d'un rythme (grille par instrument, tempo, mute, break à la volée)
     instrument.page.ts       Décomposition d'un instrument (mains, accents, vitesse, variations)
     exercise.page.ts         Exercice en cours (break & reprise, reprise à l'aveugle, appel, tempo, compte à rebours)
+    parcours.page.ts         Parcours guidé : étapes à étoiles, mission du jour, accès au réglage du micro
+    mic-setup.page.ts        Réglage du micro : mode (micro / toucher), sensibilité, mesure du décalage à la bille
+    game.page.ts             « Suis le rythme » : notes qui descendent, jugées au micro ou au toucher
+    call.page.ts             « Répondre à l'appel » : reproduire l'appel du repique, 3 vies
+    tempo-solo.page.ts       « Tiens le tempo seul » : le groupe se tait, on mesure la dérive
   audio/
-    engine.ts                AudioContext unique
+    engine.ts                AudioContext unique, sortie passée par un limiteur
     synth.ts                 Sons synthétisés de chaque instrument
     sequencer.ts             Séquenceur 16 pas, planification anticipée, mesures fournies par un provider
     player.service.ts        Service Angular (signaux) autour du séquenceur global
+    mic.service.ts           Micro + détecteur de frappes (AudioWorklet public/onset-processor.js)
+    hit-input.service.ts     Source unique des frappes (micro corrigé du décalage, ou toucher)
+  exercises/                 Jugement des frappes (fenêtres, étoiles), boucle d'images, étapes du parcours
+  state/progress.service.ts  Progression (XP, étoiles par étape, jours de pratique)
   data/
     rhythms.json             Rythmes, instruments, patterns, breaks, appels (données)
     rhythms.ts               Chargement, vérification et tri du JSON
@@ -62,6 +71,12 @@ app/src/app/
 ```
 
 Le séquenceur est unique pour toute l'app : la lecture continue quand on change d'écran, et chaque page installe simplement son fournisseur de mesures. Les notes sont planifiées 140 ms à l'avance sur l'horloge audio, ce qui donne un tempo stable même si le JavaScript a un peu de retard.
+
+## Exercices au micro
+
+Le parcours guidé juge les frappes du musicien sur son vrai instrument. Le micro passe par un AudioWorklet (`app/public/onset-processor.js`) qui tourne sur l'horloge de l'AudioContext, la même que le séquenceur : chaque frappe est datée à l'échantillon près et comparée aux notes attendues. Le détecteur filtre tout ce qui est sous 1,2 kHz (la résonance grave d'un surdo dure une demi-seconde et masquerait les attaques) puis compare une enveloppe rapide à un niveau ambiant : une attaque est un saut net au-dessus de l'ambiant. La sensibilité (1 à 5) règle le niveau minimal d'une attaque et le rapport exigé ; 3 convient à un tambour joué normalement.
+
+Le réglage du micro mesure le décalage entre le son entendu et la frappe captée : une bille fait l'aller-retour entre deux cibles avec un clic à chaque arrivée, chaque frappe détectée se pose sur la piste à l'endroit où était la bille une fois le décalage estimé retiré, et la mesure se valide quand six arrivées consécutives tiennent dans 40 ms. Ce décalage est ensuite retiré de toutes les frappes captées. Sans casque, le micro entend aussi l'app : le niveau capté pendant le décompte sert de plancher pour ignorer ses propres sons.
 
 ## Icônes
 

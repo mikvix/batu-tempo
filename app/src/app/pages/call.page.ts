@@ -6,7 +6,7 @@ import { PlayerService } from '../audio/player.service';
 import { BarSpec } from '../audio/sequencer';
 import { getInstrument } from '../data/rhythms';
 import { parsePattern, STEPS_PER_BAR, Velocity } from '../data/types';
-import { buildTargets, expireTargets, judgeHit, MISS_AFTER, Target, xpFor } from '../exercises/judge';
+import { buildTargets, expireTargets, judgeHit, Target, xpFor } from '../exercises/judge';
 import { restoreMix, startFrameLoop } from '../exercises/session';
 import { HitPad, Stars } from '../shared/exercise-ui';
 import { Icon } from '../shared/icon';
@@ -28,6 +28,13 @@ const CALLS = [
 ].map(parsePattern);
 
 const LIVES = 3;
+/**
+ * Plus tolérant que les autres exercices : répondre à un appel se juge sur l'ensemble de la réponse,
+ * pas note à note. Une frappe compte jusqu'à 150 ms de la note, et une note « bien » vaut 0,75.
+ */
+const ANSWER_WINDOW = 0.15;
+const ANSWER_MISS_AFTER = ANSWER_WINDOW + 0.03;
+const GOOD_WEIGHT = 0.75;
 /** Part minimale de notes justes pour réussir une manche. */
 const PASS_RATE = 0.6;
 
@@ -199,18 +206,18 @@ export class CallPage implements OnDestroy {
   readonly results = signal<RoundResult[]>(CALLS.map(() => 'pending'));
   readonly lives = signal(LIVES);
   readonly xp = signal(0);
-  private startTime = 0;
+  private readonly startTime = signal(0);
 
   readonly barLength = computed(() => (60 / this.bpm()) * 4);
   /** Mesure en cours depuis le départ (0 = décompte). */
-  readonly barIndex = computed(() => (this.phase() === 'playing' ? Math.floor((this.now() - this.startTime) / this.barLength()) : 0));
+  readonly barIndex = computed(() => (this.phase() === 'playing' ? Math.floor((this.now() - this.startTime()) / this.barLength()) : 0));
   readonly round = computed(() => Math.min(this.total - 1, Math.max(0, Math.floor((this.barIndex() - 1) / 2))));
   readonly stage = computed<'decompte' | 'ecoute' | 'reponse'>(() => {
     const b = this.barIndex();
     return b < 1 ? 'decompte' : b % 2 === 1 ? 'ecoute' : 'reponse';
   });
   readonly step = computed(() => {
-    const t = this.now() - this.startTime - this.barIndex() * this.barLength();
+    const t = this.now() - this.startTime() - this.barIndex() * this.barLength();
     return this.phase() === 'playing' ? Math.floor((t / this.barLength()) * STEPS_PER_BAR) : -1;
   });
   readonly beat = computed(() => (this.step() >= 0 ? Math.floor(this.step() / 4) : -1));
@@ -265,13 +272,13 @@ export class CallPage implements OnDestroy {
     });
     await this.player.play();
 
-    this.startTime = this.player.sequencer.startTime;
+    this.startTime.set(this.player.sequencer.startTime);
     // Décompte : on mesure le clic de l'app repris par le micro, pour ne pas le compter ensuite.
-    this.hits.measureNoise(this.startTime, this.startTime + this.barLength());
+    this.hits.measureNoise(this.startTime(), this.startTime() + this.barLength());
     const sixteenth = this.barLength() / STEPS_PER_BAR;
     const targets: Target[] = [];
     CALLS.forEach((p, r) => {
-      for (const t of buildTargets(p, this.startTime, sixteenth, 2 + 2 * r, 1, () => 0)) targets.push({ ...t, id: targets.length });
+      for (const t of buildTargets(p, this.startTime(), sixteenth, 2 + 2 * r, 1, () => 0)) targets.push({ ...t, id: targets.length });
     });
     this.targets.set(targets);
     this.now.set(heardNow());
@@ -282,7 +289,7 @@ export class CallPage implements OnDestroy {
   private frame(): void {
     const now = heardNow();
     this.now.set(now);
-    const expired = expireTargets(this.targets(), now);
+    const expired = expireTargets(this.targets(), now, ANSWER_MISS_AFTER);
     if (expired) this.targets.set(expired.targets);
 
     // Bilan de chaque manche dès que sa mesure de réponse est passée.
@@ -290,9 +297,9 @@ export class CallPage implements OnDestroy {
     results.forEach((res, r) => {
       if (res !== 'pending') return;
       const answerBar = 2 + 2 * r;
-      if (now < this.startTime + (answerBar + 1) * this.barLength() + MISS_AFTER) return;
+      if (now < this.startTime() + (answerBar + 1) * this.barLength() + ANSWER_MISS_AFTER) return;
       const round = this.targets().filter((t) => t.bar === answerBar);
-      const score = round.filter((t) => t.state === 'perfect').length + 0.6 * round.filter((t) => t.state === 'good').length;
+      const score = round.filter((t) => t.state === 'perfect').length + GOOD_WEIGHT * round.filter((t) => t.state === 'good').length;
       const ok = round.length > 0 && score / round.length >= PASS_RATE;
       this.results.update((list) => list.map((v, k) => (k === r ? (ok ? 'ok' : 'fail') : v)));
       if (!ok) this.lives.update((l) => l - 1);
@@ -305,7 +312,7 @@ export class CallPage implements OnDestroy {
   private onHit(hit: Hit): void {
     // Seules les notes des mesures de réponse existent : une frappe pendant l'appel ne compte pas.
     if (this.phase() !== 'playing') return;
-    const result = judgeHit(this.targets(), hit.time);
+    const result = judgeHit(this.targets(), hit.time, ANSWER_WINDOW);
     if (result) this.targets.set(result.targets);
   }
 

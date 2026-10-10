@@ -66,10 +66,10 @@ export function judgeHit(targets: Target[], time: number, window = GOOD_WINDOW):
 }
 
 /** Passe en « raté » les notes dépassées sans frappe. Renvoie null si rien n'a changé. */
-export function expireTargets(targets: Target[], now: number): { targets: Target[]; missed: number } | null {
+export function expireTargets(targets: Target[], now: number, after = MISS_AFTER): { targets: Target[]; missed: number } | null {
   let missed = 0;
   const next = targets.map((t) => {
-    if (t.state === 'pending' && now - t.time > MISS_AFTER) {
+    if (t.state === 'pending' && now - t.time > after) {
       missed++;
       return { ...t, state: 'miss' as const };
     }

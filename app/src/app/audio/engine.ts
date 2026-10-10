@@ -9,8 +9,17 @@ export function getAudioContext(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext();
     master = ctx.createGain();
-    master.gain.value = 0.9;
-    master.connect(ctx.destination);
+    // Sortie poussée fort, derrière un limiteur : au casque le niveau reste confortable sans que les
+    // tutti (plusieurs instruments sur le même temps) ne saturent.
+    master.gain.value = 1.5;
+    const limiter = ctx.createDynamicsCompressor();
+    limiter.threshold.value = -10;
+    limiter.knee.value = 6;
+    limiter.ratio.value = 14;
+    limiter.attack.value = 0.001;
+    limiter.release.value = 0.12;
+    master.connect(limiter);
+    limiter.connect(ctx.destination);
   }
   return ctx;
 }
