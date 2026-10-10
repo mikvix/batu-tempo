@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Jeu — Appel et réponse</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F4F1EA;text-decoration:none}a:hover{color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 52px 20px 0; display: flex; align-items: center; gap: 12px">
+    <a href="Parcours.dc.html" aria-label="Quitter l'exercice" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #35303D; background: #1E1B22; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </a>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto">
+      <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.02em">Appel et réponse</div>
+      <div style="font-size: 13px; color: #A8A2B0">Le repique appelle, ta caixa répond</div>
+    </div>
+    <div style="display: flex; gap: 4px; color: #FF7A5C" aria-label="2 vies sur 3">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.4-9.3-9A5.3 5.3 0 0 1 12 6.6 5.3 5.3 0 0 1 21.3 12C19 16.6 12 21 12 21z"></path></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.4-9.3-9A5.3 5.3 0 0 1 12 6.6 5.3 5.3 0 0 1 21.3 12C19 16.6 12 21 12 21z"></path></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#3A3542"><path d="M12 21s-7-4.4-9.3-9A5.3 5.3 0 0 1 12 6.6 5.3 5.3 0 0 1 21.3 12C19 16.6 12 21 12 21z"></path></svg>
+    </div>
+  </div>
+
+  <div style="margin: 16px 20px 0; display: flex; gap: 6px">
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #3ECFA6"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #3ECFA6"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #FF7A5C"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #F2B134"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #2A2630"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #2A2630"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #2A2630"></span>
+    <span style="flex: 1 1 0; height: 6px; border-radius: 3px; background: #2A2630"></span>
+  </div>
+  <div style="margin: 6px 20px 0; font-size: 12px; color: #A8A2B0">Manche 4 sur 8 · les appels se compliquent à chaque manche</div>
+
+  <div style="margin: 18px 20px 0; padding: 16px; border-radius: 22px; background: #1E1B22; border: 1px solid #2A2630; display: flex; flex-direction: column; gap: 12px; opacity: 0.55">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="height: 24px; padding: 0 10px; border-radius: 8px; background: #7FA8FF; color: #141216; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; display: flex; align-items: center">1 · ÉCOUTE</span>
+      <span style="font-size: 12px; color: #A8A2B0">Repique · 1 mesure</span>
+    </div>
+    <div style="display: flex; gap: 4px">
+      <span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #7FA8FF"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #7FA8FF"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #7FA8FF"></span>
+      <span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630; margin-left: 6px"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #7FA8FF"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span>
+      <span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #7FA8FF; margin-left: 6px"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #7FA8FF"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span>
+      <span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630; margin-left: 6px"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span><span style="flex: 1 1 0; height: 34px; border-radius: 6px; background: #2A2630"></span>
+    </div>
+  </div>
+
+  <div style="margin: 12px 20px 0; padding: 18px 16px; border-radius: 22px; background: #1E1B22; border: 2px solid #F2B134; display: flex; flex-direction: column; gap: 14px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="height: 24px; padding: 0 10px; border-radius: 8px; background: #F2B134; color: #1A1500; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; display: flex; align-items: center">2 · À TOI</span>
+      <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #3ECFA6; font-weight: 700">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+        J'écoute…
+      </span>
+    </div>
+    <div style="font-family: Syne, sans-serif; font-weight: 700; font-size: 17px">Réponds avec le même dessin</div>
+    <div style="display: flex; gap: 4px">
+      <span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #3ECFA6"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #3ECFA6"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #F2B134"></span>
+      <span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630; margin-left: 6px"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #3ECFA6"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span>
+      <span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: transparent; border: 2px dashed #F2B134; box-sizing: border-box; margin-left: 6px"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: transparent; border: 2px dashed #F2B134; box-sizing: border-box"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span>
+      <span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630; margin-left: 6px"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span><span style="flex: 1 1 0; height: 44px; border-radius: 8px; background: #2A2630"></span>
+    </div>
+    <div style="display: flex; gap: 14px; font-size: 12px; color: #A8A2B0">
+      <span style="display: flex; align-items: center; gap: 6px"><i style="width: 10px; height: 10px; border-radius: 3px; background: #3ECFA6"></i>pile</span>
+      <span style="display: flex; align-items: center; gap: 6px"><i style="width: 10px; height: 10px; border-radius: 3px; background: #F2B134"></i>décalé</span>
+      <span style="display: flex; align-items: center; gap: 6px"><i style="width: 10px; height: 10px; border-radius: 3px; border: 2px dashed #F2B134; box-sizing: border-box"></i>à venir</span>
+    </div>
+  </div>
+
+  <div style="margin: 14px 20px 0; display: flex; justify-content: center; gap: 12px">
+    <span style="width: 44px; height: 44px; border-radius: 50%; background: #2A2630; color: #A8A2B0; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800">1</span>
+    <span style="width: 44px; height: 44px; border-radius: 50%; background: #2A2630; color: #A8A2B0; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800">2</span>
+    <span style="width: 44px; height: 44px; border-radius: 50%; background: #F2B134; color: #1A1500; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800; transform: scale(1.12)">3</span>
+    <span style="width: 44px; height: 44px; border-radius: 50%; background: #2A2630; color: #A8A2B0; display: flex; align-items: center; justify-content: center; font-family: Syne, sans-serif; font-weight: 800">4</span>
+  </div>
+
+  <div style="flex: 1 1 auto"></div>
+
+  <div style="margin: 0 20px 28px; padding: 14px 16px; border-radius: 18px; background: #1E1B22; border: 1px solid #2A2630; display: flex; gap: 12px; align-items: center">
+    <div style="width: 40px; height: 40px; border-radius: 12px; background: #2A2630; color: #7FA8FF; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h3l6 4V6L7 10H4a1 1 0 0 0-1 1z"></path><path d="M17 9a4 4 0 0 1 0 6"></path></svg>
+    </div>
+    <span style="font-size: 13px; line-height: 1.45; color: #A8A2B0">En batucada, l'appel annonce toujours la suite : break, changement de groove ou arrêt. Ce jeu entraîne ton oreille à le reconnaître.</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

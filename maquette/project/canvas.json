@@ -1,20 +1,53 @@
 {
   "v": 3,
-  "createdOnFiles": {"v": 1, "at": "2026-10-04T10:00:00Z"},
-  "title": "Batu Tempo",
-  "launch": {"view": "canvas"},
-  "pages": [],
+  "attachments": {},
   "boards": {
-    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 844, "title": "1 · Accueil — Rythmes", "radius": 40},
-    "Player.dc.html": {"x": 470, "y": 0, "w": 390, "h": 844, "title": "2 · Lecteur — Samba Reggae", "radius": 40, "is_interactive": true},
-    "Instrument.dc.html": {"x": 940, "y": 0, "w": 390, "h": 844, "title": "3 · Instrument — Caixa", "radius": 40},
-    "Exercices.dc.html": {"x": 1410, "y": 0, "w": 390, "h": 844, "title": "4 · Exercices", "radius": 40},
-    "Break.dc.html": {"x": 1880, "y": 0, "w": 390, "h": 844, "title": "5 · Exercice — Break & reprise", "radius": 40, "is_interactive": true}
+    "Break.dc.html": { "h": 844, "is_interactive": true, "radius": 40, "title": "5 · Exercice — Break & reprise", "w": 390, "x": 1880, "y": 0 },
+    "Exercices.dc.html": { "h": 844, "radius": 40, "title": "4 · Exercices", "w": 390, "x": 1410, "y": 0 },
+    "Instrument.dc.html": { "h": 844, "radius": 40, "title": "3 · Instrument — Caixa", "w": 390, "x": 940, "y": 0 },
+    "Main.dc.html": { "h": 844, "radius": 40, "title": "1 · Accueil — Rythmes", "w": 390, "x": 0, "y": 0 },
+    "Player.dc.html": { "h": 844, "is_interactive": true, "radius": 40, "title": "2 · Lecteur — Samba Reggae", "w": 390, "x": 470, "y": 0 },
+    "Parcours.dc.html": { "h": 844, "radius": 40, "title": "6 · Parcours guidé", "w": 390, "x": 0, "y": 1360 },
+    "Calibration.dc.html": { "h": 844, "radius": 40, "title": "7 · Réglage du micro", "w": 390, "x": 470, "y": 1360 },
+    "Jeu.dc.html": { "h": 844, "is_interactive": true, "radius": 40, "title": "8 · Jeu — Suis le rythme", "w": 390, "x": 940, "y": 1360 },
+    "Resultat.dc.html": { "h": 844, "radius": 40, "title": "9 · Résultat et conseil", "w": 390, "x": 1410, "y": 1360 },
+    "Appel.dc.html": { "h": 844, "radius": 40, "title": "10 · Jeu — Appel et réponse", "w": 390, "x": 1880, "y": 1360 },
+    "Tempo.dc.html": { "h": 844, "radius": 40, "title": "11 · Défi — Tiens le tempo seul", "w": 390, "x": 2350, "y": 1360 }
   },
-  "order": ["Main.dc.html", "Player.dc.html", "Instrument.dc.html", "Exercices.dc.html", "Break.dc.html"],
+  "createdOnFiles": { "at": "2026-10-04T10:00:00Z", "v": 1 },
+  "designSystems": [],
+  "launch": { "view": "canvas" },
   "notes": {
-    "titre": {"x": 0, "y": -300, "text": "Batu Tempo — parcours principal (maquette v1)", "kind": "title1", "maxW": 2270},
-    "legende": {"x": 2350, "y": 0, "w": 300, "text": "Parcours cliquable : les cartes de l'accueil ouvrent le lecteur, « Mon instrument » ouvre la décomposition, l'onglet Exercices ouvre la liste, et « Break & reprise » lance l'exercice.\n\nLes écrans 2 et 5 sont jouables (Play) : tempo, mute par instrument, défilement de la grille, compte à rebours du break.", "fill": "orange"}
+    "legende": {
+      "fill": "orange",
+      "text": "Parcours cliquable : les cartes de l'accueil ouvrent le lecteur, « Mon instrument » ouvre la décomposition, l'onglet Exercices ouvre la liste, et « Break & reprise » lance l'exercice.\n\nLes écrans 2 et 5 sont jouables (Play) : tempo, mute par instrument, défilement de la grille, compte à rebours du break.",
+      "w": 300,
+      "x": 2350,
+      "y": 0
+    },
+    "titre": { "kind": "title1", "maxW": 2270, "text": "Batu Tempo — parcours principal (maquette v1)", "w": 240, "x": 0, "y": -300 },
+    "titre2": { "kind": "title1", "maxW": 2740, "text": "Exercices guidés et ludiques, validés au micro (maquette v2)", "x": 0, "y": 1060 },
+    "micro": {
+      "fill": "teal",
+      "w": 320,
+      "x": 2830,
+      "y": 1360,
+      "text": "Détection au micro : faisable\n\nLe navigateur et l'app Android donnent accès au micro. On repère chaque frappe à sa montée brusque de volume, et on compare son instant au temps attendu, à quelques millisecondes près.\n\nÀ prévoir :\n• Réglage du micro (écran 7) pour mesurer le retard propre au téléphone, souvent 40 à 150 ms.\n• Casque filaire conseillé, sinon le micro entend aussi le son joué par l'app.\n• Bluetooth à éviter : 150 à 250 ms de retard.\n• Un instrument à la fois : en groupe, le micro entend tout le monde. C'est un outil d'entraînement seul.\n• On mesure bien le placement et la force (accent ou ghost), pas la main utilisée.\n\nL'écran 8 est jouable : le pad simule le micro."
+    }
   },
-  "designSystems": []
+  "order": [
+    "Main.dc.html",
+    "Player.dc.html",
+    "Instrument.dc.html",
+    "Exercices.dc.html",
+    "Break.dc.html",
+    "Parcours.dc.html",
+    "Calibration.dc.html",
+    "Jeu.dc.html",
+    "Resultat.dc.html",
+    "Appel.dc.html",
+    "Tempo.dc.html"
+  ],
+  "pages": [],
+  "title": "Batu Tempo"
 }

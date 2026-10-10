@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Jeu — Suis le rythme</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#F4F1EA;text-decoration:none}a:hover{color:#FFFFFF}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #141216; color: #F4F1EA; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <div style="padding: 52px 20px 0; display: flex; align-items: center; gap: 12px">
+    <a href="Parcours.dc.html" aria-label="Quitter l'exercice" style="width: 44px; height: 44px; border-radius: 14px; border: 1px solid #35303D; background: #1E1B22; display: flex; align-items: center; justify-content: center; flex: 0 0 auto">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </a>
+    <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto">
+      <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.02em">Suis le rythme</div>
+      <div style="font-size: 13px; color: #A8A2B0">Caixa · Samba Reggae · 70 BPM</div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end">
+      <span style="font-family: Syne, sans-serif; font-weight: 800; font-size: 22px; color: #F2B134">{{score}}</span>
+      <span style="font-size: 11px; color: #A8A2B0">points</span>
+    </div>
+  </div>
+
+  <div style="margin: 14px 20px 0; height: 6px; border-radius: 3px; background: #2A2630; overflow: hidden">
+    <div style="{{progressStyle}}"></div>
+  </div>
+
+  <div style="margin: 14px 20px 0; height: 452px; border-radius: 24px; background: #1A1820; border: 1px solid #2A2630; position: relative; overflow: hidden">
+    <sc-for list="{{guides}}" as="g" hint-placeholder-count="4">
+      <div style="{{g.style}}"></div>
+    </sc-for>
+
+    <div style="position: absolute; left: 0; right: 0; top: 372px; height: 64px; background: linear-gradient(180deg, rgba(242,177,52,0) 0%, rgba(242,177,52,0.08) 100%)"></div>
+    <div style="position: absolute; left: 70px; right: 70px; top: 402px; height: 4px; border-radius: 2px; background: #F4F1EA; opacity: 0.85"></div>
+    <div style="{{targetStyle}}"></div>
+
+    <sc-for list="{{notes}}" as="n" hint-placeholder-count="6">
+      <div style="{{n.style}}"></div>
+    </sc-for>
+
+    <div style="position: absolute; left: 0; right: 0; top: 140px; display: flex; flex-direction: column; align-items: center; gap: 4px; pointer-events: none">
+      <div style="{{feedbackStyle}}">{{feedback}}</div>
+      <sc-if value="{{showCombo}}" hint-placeholder-val="{{false}}">
+        <div style="font-size: 13px; font-weight: 700; color: #A8A2B0">Série × {{combo}}</div>
+      </sc-if>
+    </div>
+
+    <sc-if value="{{idle}}" hint-placeholder-val="{{true}}">
+      <div style="position: absolute; inset: 0; background: rgba(20,18,22,0.82); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 0 30px; text-align: center">
+        <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 24px">Prêt ?</div>
+        <div style="font-size: 14px; line-height: 1.45; color: #A8A2B0">Frappe ta caixa quand une note touche la ligne. Les grosses notes sont les accents. Une mesure de décompte avant de commencer.</div>
+        <button onClick="{{start}}" style="margin-top: 6px; height: 52px; padding: 0 28px; border-radius: 16px; border: none; background: #F2B134; color: #1A1500; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer">Démarrer</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; background: rgba(20,18,22,0.88); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 0 30px; text-align: center">
+        <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 26px">Terminé !</div>
+        <div style="font-family: Syne, sans-serif; font-weight: 800; font-size: 54px; color: #3ECFA6; line-height: 1">{{accuracy}} %</div>
+        <div style="font-size: 14px; color: #A8A2B0">{{summary}}</div>
+        <div style="display: flex; gap: 10px; margin-top: 8px">
+          <button onClick="{{start}}" style="height: 48px; padding: 0 18px; border-radius: 14px; border: 1px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer">Rejouer</button>
+          <a href="Resultat.dc.html" style="height: 48px; padding: 0 18px; border-radius: 14px; background: #F2B134; color: #1A1500; font-size: 14px; font-weight: 700; display: flex; align-items: center">Voir le détail</a>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="margin: 14px 20px 0; display: flex; align-items: center; gap: 12px">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; width: 44px; flex: 0 0 auto">
+      <div style="width: 14px; height: 70px; border-radius: 7px; background: #2A2630; position: relative; overflow: hidden">
+        <div style="{{meterStyle}}"></div>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ECFA6" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>
+    </div>
+    <button onClick="{{hit}}" aria-label="Frapper" style="flex: 1 1 auto; height: 112px; border-radius: 24px; border: 2px solid #35303D; background: #1E1B22; color: #F4F1EA; font-family: Syne, sans-serif; font-weight: 800; font-size: 20px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px">
+      FRAPPE
+      <span style="font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 12px; color: #A8A2B0">Pad d'essai · dans l'app, c'est le micro qui écoute</span>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.bpm = 70;
+    this.sixteenth = 60000 / this.bpm / 4;
+    this.bar = this.sixteenth * 16;
+    this.leadIn = this.bar;
+    this.hitY = 404;
+    this.speed = 0.24;
+    var accents = [0, 3, 6, 10, 12];
+    this.notes = [];
+    for (var b = 0; b < 4; b++) {
+      for (var k = 0; k < accents.length; k++) {
+        var s = accents[k];
+        this.notes.push({ time: this.leadIn + b * this.bar + s * this.sixteenth, accent: s === 0 || s === 6 || s === 12 });
+      }
+    }
+    this.lastTime = this.notes[this.notes.length - 1].time;
+    this.state = { status: 'idle', t: 0, judged: {}, score: 0, combo: 0, best: 0, perfect: 0, good: 0, miss: 0, feedback: '', feedbackColor: '#F4F1EA', feedbackAt: -9999, tapAt: -9999 };
+    this.timer = null;
+  }
+  componentWillUnmount() { if (this.timer) clearInterval(this.timer); }
+  begin() {
+    if (this.timer) clearInterval(this.timer);
+    this.startedAt = Date.now();
+    this.setState({ status: 'playing', t: 0, judged: {}, score: 0, combo: 0, best: 0, perfect: 0, good: 0, miss: 0, feedback: '', feedbackAt: -9999, tapAt: -9999 });
+    this.timer = setInterval(() => this.tick(), 30);
+  }
+  tick() {
+    var t = Date.now() - this.startedAt;
+    var s = this.state;
+    var judged = s.judged;
+    var patch = { t: t };
+    var changed = false;
+    for (var i = 0; i < this.notes.length; i++) {
+      if (judged[i] === undefined && t - this.notes[i].time > 140) {
+        if (!changed) { judged = Object.assign({}, judged); changed = true; }
+        judged[i] = 'miss';
+        patch.miss = (patch.miss !== undefined ? patch.miss : s.miss) + 1;
+        patch.combo = 0;
+        patch.feedback = 'Raté';
+        patch.feedbackColor = '#FF7A5C';
+        patch.feedbackAt = t;
+      }
+    }
+    if (changed) patch.judged = judged;
+    if (t > this.lastTime + 900) {
+      clearInterval(this.timer);
+      this.timer = null;
+      patch.status = 'done';
+    }
+    this.setState(patch);
+  }
+  tap() {
+    var s = this.state;
+    if (s.status !== 'playing') return;
+    var t = Date.now() - this.startedAt;
+    var best = -1;
+    var bestDt = 99999;
+    for (var i = 0; i < this.notes.length; i++) {
+      if (s.judged[i] !== undefined) continue;
+      var dt = t - this.notes[i].time;
+      if (Math.abs(dt) < Math.abs(bestDt)) { bestDt = dt; best = i; }
+    }
+    var patch = { tapAt: t, feedbackAt: t };
+    if (best < 0 || Math.abs(bestDt) > 140) {
+      patch.feedback = 'Hors temps';
+      patch.feedbackColor = '#A8A2B0';
+      patch.combo = 0;
+    } else {
+      var judged = Object.assign({}, s.judged);
+      var combo = s.combo + 1;
+      patch.combo = combo;
+      patch.best = Math.max(s.best, combo);
+      if (Math.abs(bestDt) <= 55) {
+        judged[best] = 'perfect';
+        patch.perfect = s.perfect + 1;
+        patch.score = s.score + 100 + Math.min(combo, 10) * 5;
+        patch.feedback = 'Parfait !';
+        patch.feedbackColor = '#3ECFA6';
+      } else {
+        judged[best] = 'good';
+        patch.good = s.good + 1;
+        patch.score = s.score + 50;
+        patch.feedback = bestDt < 0 ? 'Bien · un peu tôt' : 'Bien · un peu tard';
+        patch.feedbackColor = '#F2B134';
+      }
+      patch.judged = judged;
+    }
+    this.setState(patch);
+  }
+  renderVals() {
+    var s = this.state;
+    var t = s.status === 'idle' ? 0 : s.t;
+    var notes = [];
+    for (var i = 0; i < this.notes.length; i++) {
+      var n = this.notes[i];
+      var y = this.hitY - (n.time - t) * this.speed;
+      if (y < -40 || y > 470) continue;
+      var j = s.judged[i];
+      var size = n.accent ? 46 : 32;
+      var color = j === 'perfect' ? '#3ECFA6' : j === 'good' ? '#F2B134' : j === 'miss' ? '#3A3542' : (n.accent ? '#F2B134' : '#C9933A');
+      var op = j === 'perfect' || j === 'good' ? Math.max(0, 1 - (t - n.time) / 300) : 1;
+      var scale = j === 'perfect' || j === 'good' ? 1 + Math.min(0.6, (t - n.time) / 400) : 1;
+      notes.push({ style: 'position: absolute; left: 50%; top: ' + (y - size / 2).toFixed(1) + 'px; width: ' + size + 'px; height: ' + size + 'px; margin-left: ' + (-size / 2) + 'px; border-radius: 50%; background: ' + color + '; opacity: ' + op.toFixed(2) + '; transform: scale(' + scale.toFixed(2) + '); box-shadow: 0 0 18px ' + color + '55;' + (n.accent && !j ? ' border: 3px solid #F4F1EA;' : '') });
+    }
+    var guides = [];
+    var firstBeat = Math.floor((t - 2000) / (this.sixteenth * 4));
+    for (var b = firstBeat; b < firstBeat + 12; b++) {
+      var bt = b * this.sixteenth * 4;
+      var gy = this.hitY - (bt - t) * this.speed;
+      if (gy < 0 || gy > 452) continue;
+      var isBar = ((b % 4) + 4) % 4 === 0;
+      guides.push({ style: 'position: absolute; left: 28px; right: 28px; top: ' + gy.toFixed(1) + 'px; height: ' + (isBar ? 2 : 1) + 'px; background: ' + (isBar ? '#35303D' : '#26232C') + ';' });
+    }
+    var sinceTap = t - s.tapAt;
+    var level = s.status === 'playing' ? Math.max(0.08, 1 - sinceTap / 260) : 0.08;
+    var fbAge = t - s.feedbackAt;
+    var fbOp = s.status === 'playing' ? Math.max(0, 1 - fbAge / 700) : 0;
+    var total = this.notes.length;
+    var acc = Math.round(((s.perfect + s.good * 0.6) / total) * 100);
+    var progress = s.status === 'idle' ? 0 : Math.min(100, (t / (this.lastTime + 900)) * 100);
+    var pulse = s.status === 'playing' && sinceTap < 140;
+    return {
+      notes: notes,
+      guides: guides,
+      score: s.score,
+      combo: s.combo,
+      showCombo: s.status === 'playing' && s.combo >= 3,
+      feedback: s.feedback,
+      feedbackStyle: 'font-family: Syne, sans-serif; font-weight: 800; font-size: 30px; color: ' + s.feedbackColor + '; opacity: ' + fbOp.toFixed(2) + '; transform: scale(' + (1 + Math.max(0, 0.25 - fbAge / 800)).toFixed(2) + ');',
+      targetStyle: 'position: absolute; left: 50%; top: 380px; width: 48px; height: 48px; margin-left: -24px; border-radius: 50%; border: 3px solid ' + (pulse ? '#F2B134' : '#F4F1EA') + '; box-sizing: border-box; opacity: 0.9;' + (pulse ? ' box-shadow: 0 0 0 8px rgba(242,177,52,0.25);' : ''),
+      meterStyle: 'position: absolute; left: 0; right: 0; bottom: 0; height: ' + Math.round(level * 100) + '%; background: #3ECFA6; border-radius: 7px;',
+      progressStyle: 'height: 6px; border-radius: 3px; background: #F2B134; width: ' + progress.toFixed(1) + '%;',
+      idle: s.status === 'idle',
+      done: s.status === 'done',
+      accuracy: acc,
+      summary: s.perfect + ' parfaits · ' + s.good + ' bien · ' + s.miss + ' ratés · meilleure série ' + s.best,
+      start: () => this.begin(),
+      hit: () => this.tap()
+    };
+  }
+}
+</script>
+</body>
+</html>
