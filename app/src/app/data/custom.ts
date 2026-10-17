@@ -1,5 +1,5 @@
 import { VOICES } from './rhythms';
-import { BreakDef, InstrumentDef, parsePattern, RhythmDef, STEPS_PER_BAR, Velocity, VoiceId } from './types';
+import { BreakDef, InstrumentDef, parsePattern, PatternVariation, RhythmDef, STEPS_PER_BAR, Velocity, VoiceId } from './types';
 
 /** Instruments proposés dans l'éditeur, avec leur son et un rôle par défaut. */
 export const INSTRUMENT_PRESETS: { voice: VoiceId; name: string; short: string; role: string }[] = [
@@ -121,6 +121,16 @@ export function sanitizeRhythm(raw: unknown): RhythmDef | null {
     let instId = slugify(str(i['id'], 30) || instName);
     for (let n = 2; usedIds.has(instId); n++) instId = `${slugify(instName)}-${n}`;
     usedIds.add(instId);
+    // Variations (autres grilles du même instrument), facultatives.
+    const variations: PatternVariation[] = [];
+    for (const rawVar of Array.isArray(i['variations']) ? i['variations'].slice(0, 6) : []) {
+      if (!rawVar || typeof rawVar !== 'object') continue;
+      const v = rawVar as Record<string, unknown>;
+      const varPattern = cleanPattern(v['pattern'], MAX_BARS);
+      const varName = str(v['name'], 40);
+      if (!varPattern || !varName) continue;
+      variations.push({ id: slugify(str(v['id'], 30) || varName), name: varName, pattern: varPattern });
+    }
     instruments.push({
       id: instId,
       name: instName,
@@ -129,6 +139,7 @@ export function sanitizeRhythm(raw: unknown): RhythmDef | null {
       voice,
       pattern,
       showHands: HAND_VOICES.has(voice) || i['showHands'] === true,
+      variations: variations.length ? variations : undefined,
     });
   }
   if (!instruments.length) return null;
@@ -182,7 +193,15 @@ export function minifyRhythm(r: RhythmDef): unknown {
     level: r.level,
     bpm: r.bpm,
     description: r.description || undefined,
-    instruments: r.instruments.map((i) => ({ id: i.id, name: i.name, short: i.short, role: i.role || undefined, voice: i.voice, pattern: compact(i.pattern) })),
+    instruments: r.instruments.map((i) => ({
+      id: i.id,
+      name: i.name,
+      short: i.short,
+      role: i.role || undefined,
+      voice: i.voice,
+      pattern: compact(i.pattern),
+      variations: i.variations?.length ? i.variations.map((v) => ({ id: v.id, name: v.name, pattern: compact(v.pattern) })) : undefined,
+    })),
     breaks: r.breaks.map((b) => ({
       id: b.id,
       name: b.name,
