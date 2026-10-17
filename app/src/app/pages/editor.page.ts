@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { buildBarSpec, PlayerService } from '../audio/player.service';
 import { defaultBreak, fitCells, INSTRUMENT_PRESETS, newCustomId, sanitizeRhythm, toPattern } from '../data/custom';
 import { shareRhythm } from '../data/share';
-import { barsOf, parsePattern, RhythmDef, SILENT_BAR, STEPS_PER_BAR, Velocity, VoiceId } from '../data/types';
+import { barsOf, parsePattern, PatternVariation, RhythmDef, SILENT_BAR, STEPS_PER_BAR, Velocity, VoiceId } from '../data/types';
 import { Icon } from '../shared/icon';
 import { NEXT_VELOCITY, StepEditor } from '../shared/step-editor';
 import { TempoControl } from '../shared/tempo-control';
@@ -19,6 +19,8 @@ interface DraftInstrument {
   voice: VoiceId;
   role: string;
   cells: Velocity[];
+  /** Variations de l'instrument d'origine : l'éditeur ne les modifie pas mais les conserve. */
+  variations?: PatternVariation[];
 }
 
 interface Draft {
@@ -84,6 +86,7 @@ function draftFrom(r: RhythmDef, asCopy: boolean): Draft {
     voice: i.voice,
     role: i.role,
     cells: fitCells(parsePattern(i.pattern), bars),
+    variations: i.variations,
   }));
   const breakCells: Record<string, Velocity[]> = {};
   for (const inst of instruments) {
@@ -134,6 +137,7 @@ function toRhythm(d: Draft, id: string): RhythmDef {
       role: i.role,
       voice: i.voice,
       pattern: toPattern(i.cells),
+      variations: i.variations,
     })),
     breaks: hasBreak ? [{ id: 'break', name: 'Break', description: '', bars }] : [],
   };
