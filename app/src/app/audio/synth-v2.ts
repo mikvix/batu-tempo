@@ -12,6 +12,11 @@ import { envelope, getNoise, noise, tone } from './synth-core';
  */
 
 const VEL_GAIN: Record<Velocity, number> = { 0: 0, 1: 0.3, 2: 0.78, 3: 1 };
+/**
+ * Équilibre du jeu B : la caixa (bruit large bande) masque vite les surdos, on la retient ; le
+ * repique mène la batucada et doit passer au-dessus de tout le monde.
+ */
+const LEVEL: { [voice in VoiceId]?: number } = { caixa: 0.6, repique: 1.6, surdo1: 1.1, surdo2: 1.05 };
 const VEL_DECAY: Record<Velocity, number> = { 0: 0, 1: 0.5, 2: 0.85, 3: 1 };
 
 /** Courbe de saturation douce, partagée. */
@@ -139,6 +144,7 @@ function shake(ctx: AudioContext, out: AudioNode, t: number, o: { freq: number; 
 
 export function playVoiceV2(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: number, vel: Velocity, volume = 1): void {
   if (vel === 0 || volume <= 0) return;
+  volume *= LEVEL[voice] ?? 1;
   const v = VEL_GAIN[vel] * volume;
   const d = VEL_DECAY[vel];
   const accent = vel === 3;
