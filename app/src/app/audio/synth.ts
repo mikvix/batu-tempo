@@ -1,4 +1,5 @@
 import { Velocity, VoiceId } from '../data/types';
+import { isLiteAudio } from './engine';
 import { envelope, getNoise, noise, tone } from './synth-core';
 
 /**
@@ -78,7 +79,7 @@ function voiceOut(ctx: AudioContext, out: AudioNode, room: number): GainNode {
   const g = ctx.createGain();
   g.gain.value = 1;
   g.connect(out);
-  if (room > 0) {
+  if (room > 0 && !isLiteAudio()) {
     const s = ctx.createGain();
     s.gain.value = room;
     g.connect(s);
@@ -109,8 +110,9 @@ interface HeadOpts {
 
 /** Peau frappée : fondamental qui descend, partiels, saturation douce. */
 function head(ctx: AudioContext, out: AudioNode, t: number, o: HeadOpts): void {
+  const lite = isLiteAudio();
   let dest: AudioNode = out;
-  if (o.drive) {
+  if (o.drive && !lite) {
     const shaper = ctx.createWaveShaper();
     shaper.curve = getDriveCurve();
     const pre = ctx.createGain();
@@ -123,14 +125,18 @@ function head(ctx: AudioContext, out: AudioNode, t: number, o: HeadOpts): void {
     dest = pre;
   }
   tone(ctx, dest, t, { type: 'sine', f0: o.f0, f1: o.f1, glide: o.glide ?? 0.05, decay: o.decay, peak: o.peak });
-  for (const p of o.partials ?? []) {
-    tone(ctx, dest, t, { type: p.type ?? 'sine', f0: o.f0 * p.ratio, f1: o.f1 * p.ratio, glide: o.glide ?? 0.05, decay: p.decay, peak: o.peak * p.gain });
+  // En mode léger : un seul partiel, un peu relevé — sur un petit haut-parleur qui ne rend pas le
+  // fondamental, c'est lui qui porte la hauteur de la peau.
+  const partials = lite ? (o.partials ?? []).slice(0, 1) : (o.partials ?? []);
+  for (const p of partials) {
+    const gain = lite ? p.gain * 1.4 : p.gain;
+    tone(ctx, dest, t, { type: p.type ?? 'sine', f0: o.f0 * p.ratio, f1: o.f1 * p.ratio, glide: o.glide ?? 0.05, decay: p.decay, peak: o.peak * gain });
   }
 }
 
 /** Cloche : partiels inharmoniques fixes, chacun avec sa durée. */
 function bell(ctx: AudioContext, out: AudioNode, t: number, f: number, peak: number, partials: Partial[]): void {
-  for (const p of partials) {
+  for (const p of isLiteAudio() ? partials.slice(0, 3) : partials) {
     tone(ctx, out, t, { type: p.type ?? 'sine', f0: f * p.ratio, decay: p.decay, peak: peak * p.gain });
   }
 }
@@ -153,6 +159,7 @@ function shake(ctx: AudioContext, out: AudioNode, t: number, o: { freq: number; 
 export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: number, vel: Velocity, volume = 1): void {
   if (vel === 0 || volume <= 0) return;
   volume *= LEVEL[voice] ?? 1;
+  const lite = isLiteAudio();
   const v = VEL_GAIN[vel] * volume;
   const d = VEL_DECAY[vel];
   const accent = vel === 3;
@@ -187,9 +194,9 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       const o = voiceOut(ctx, out, 0.1);
       // Fût : deux modes courts ; timbre : bruit brillant un peu plus long, qui frise.
       tone(ctx, o, t, { type: 'triangle', f0: 190, f1: 170, glide: 0.02, decay: 0.07, peak: 0.32 * v });
-      tone(ctx, o, t, { type: 'sine', f0: 335, f1: 300, glide: 0.02, decay: 0.05, peak: 0.18 * v });
+      if (!lite) tone(ctx, o, t, { type: 'sine', f0: 335, f1: 300, glide: 0.02, decay: 0.05, peak: 0.18 * v });
       noise(ctx, o, t, { filter: 'highpass', freq: 2200, decay: 0.17 * d, peak: 0.75 * v });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 5600, q: 0.7, decay: 0.11 * d, peak: 0.5 * v });
+      if (!lite) noise(ctx, o, t, { filter: 'bandpass', freq: 5600, q: 0.7, decay: 0.11 * d, peak: 0.5 * v });
       if (accent) {
         // Rim shot : attaque métallique en plus.
         tone(ctx, o, t, { type: 'square', f0: 1350, decay: 0.012, peak: 0.12 * v });
@@ -206,16 +213,18 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       const o = voiceOut(ctx, out, 0.1);
       const g = 0.22 * v;
       let dest: AudioNode = o;
-      const shaper = ctx.createWaveShaper();
-      shaper.curve = getDriveCurve();
-      const pre = ctx.createGain();
-      pre.gain.value = 1.4;
-      const post = ctx.createGain();
-      post.gain.value = 0.8;
-      pre.connect(shaper);
-      shaper.connect(post);
-      post.connect(o);
-      dest = pre;
+      if (!lite) {
+        const shaper = ctx.createWaveShaper();
+        shaper.curve = getDriveCurve();
+        const pre = ctx.createGain();
+        pre.gain.value = 1.4;
+        const post = ctx.createGain();
+        post.gain.value = 0.8;
+        pre.connect(shaper);
+        shaper.connect(post);
+        post.connect(o);
+        dest = pre;
+      }
       // Les partiels graves portent le corps « plastique » (triangle = harmoniques impaires qui
       // s'éteignent vite) ; les partiels aigus sont présents mais brefs et discrets, sinon le son
       // vire à la cloche. Chaque partiel descend légèrement en hauteur à l'attaque.
@@ -223,8 +232,10 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       tone(ctx, dest, t, { type: 'sine', f0: 610, f1: 565, glide: 0.015, decay: 0.12 * d, peak: 0.8 * g });
       tone(ctx, dest, t, { type: 'sine', f0: 810, f1: 755, glide: 0.015, decay: 0.09 * d, peak: 0.7 * g });
       tone(ctx, dest, t, { type: 'sine', f0: 1230, decay: 0.07 * d, peak: 0.45 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 1460, decay: 0.07 * d, peak: 0.3 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 1880, decay: 0.06 * d, peak: 0.3 * g });
+      if (!lite) {
+        tone(ctx, dest, t, { type: 'sine', f0: 1460, decay: 0.07 * d, peak: 0.3 * g });
+        tone(ctx, dest, t, { type: 'sine', f0: 1880, decay: 0.06 * d, peak: 0.3 * g });
+      }
       // Bruit de peau : médium-aigu plutôt que brillant, court.
       noise(ctx, o, t, { filter: 'bandpass', freq: 2600, q: 0.6, decay: 0.12 * d, peak: 0.45 * v });
       // Impact de la baguette : large bande, 5 ms.
@@ -280,7 +291,7 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       const o = voiceOut(ctx, out, 0.08);
       // Secoué : les grains montent puis retombent, avec un petit rebond.
       shake(ctx, o, t, { freq: 6500, attack: 0.012, decay: accent ? 0.11 : 0.07, peak: 0.5 * v });
-      shake(ctx, o, t + 0.018, { freq: 8000, attack: 0.008, decay: 0.04, peak: 0.25 * v });
+      if (!lite) shake(ctx, o, t + 0.018, { freq: 8000, attack: 0.008, decay: 0.04, peak: 0.25 * v });
       break;
     }
     case 'triangulo': {
@@ -300,7 +311,7 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       head(ctx, o, t, { f0: 250, f1: 175, glide: 0.03, decay: 0.14 * d, peak: 0.45 * v, partials: [{ ratio: 1.6, gain: 0.25, decay: 0.06 }] });
       // Cymbalettes : attaque puis frisement.
       shake(ctx, o, t, { freq: 6000, attack: 0.004, decay: 0.12, peak: 0.45 * v });
-      shake(ctx, o, t, { freq: 9000, attack: 0.02, decay: 0.2, peak: 0.18 * v, filter: 'bandpass', q: 1.5 });
+      if (!lite) shake(ctx, o, t, { freq: 9000, attack: 0.02, decay: 0.2, peak: 0.18 * v, filter: 'bandpass', q: 1.5 });
       break;
     }
     // Repères du séquenceur.

@@ -5,9 +5,35 @@
 let ctx: AudioContext | null = null;
 let master: GainNode | null = null;
 
+/** Téléphone ou tablette : fil audio moins puissant, haut-parleur sans graves. */
+const MOBILE =
+  typeof navigator !== 'undefined' &&
+  (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && (navigator.hardwareConcurrency ?? 8) <= 8));
+
+/** Choix explicite de l'utilisateur (réglage « audio léger »), null = automatique selon l'appareil. */
+let liteOverride: boolean | null = null;
+
+export function isMobileDevice(): boolean {
+  return MOBILE;
+}
+
+export function setLiteAudio(value: boolean | null): void {
+  liteOverride = value;
+}
+
+/**
+ * Mode audio léger : moins de nœuds par coup (pas de salle, pas de saturation, moins de partiels),
+ * pour que le fil audio d'un téléphone suive sans craquer.
+ */
+export function isLiteAudio(): boolean {
+  return liteOverride ?? MOBILE;
+}
+
 export function getAudioContext(): AudioContext {
   if (!ctx) {
-    ctx = new AudioContext();
+    // Sur mobile, un tampon de sortie plus large (« playback ») évite les craquements ; la latence
+    // supplémentaire est connue du contexte (outputLatency) et compensée par l'app.
+    ctx = new AudioContext({ latencyHint: MOBILE ? 'playback' : 'interactive' });
     master = ctx.createGain();
     // Sortie poussée fort, derrière un limiteur : au casque le niveau reste confortable sans que les
     // tutti (plusieurs instruments sur le même temps) ne saturent.

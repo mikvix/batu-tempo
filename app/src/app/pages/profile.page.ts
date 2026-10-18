@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { isMobileDevice } from '../audio/engine';
 import { Icon } from '../shared/icon';
 import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
@@ -59,6 +60,20 @@ import { SettingsService } from '../state/settings.service';
           </div>
         </div>
 
+        <p class="label" style="margin-top: 26px">Audio</p>
+        <div class="card stack" style="margin-top: 10px; gap: 10px">
+          <span class="strong">Qualité du son</span>
+          <div class="chip-row">
+            <button class="chip chip--grow" type="button" [class.chip--active]="settings.audioLite() === null" (click)="settings.update({ audioLite: null })">Auto</button>
+            <button class="chip chip--grow" type="button" [class.chip--active]="settings.audioLite() === true" (click)="settings.update({ audioLite: true })">Léger</button>
+            <button class="chip chip--grow" type="button" [class.chip--active]="settings.audioLite() === false" (click)="settings.update({ audioLite: false })">Complet</button>
+          </div>
+          <span class="muted small">
+            Léger : moins de calcul par coup (pas de salle, moins de partiels), pour les téléphones qui craquent. Auto = léger sur
+            mobile{{ mobile ? ' (cet appareil)' : '' }}, complet sur ordinateur.
+          </span>
+        </div>
+
         <p class="label" style="margin-top: 26px">Micro</p>
         <a class="list-card" style="margin-top: 10px" routerLink="/micro" [queryParams]="{ retour: '/profil' }">
           <span class="icon-box" style="color: var(--reprise)"><app-icon name="mic" /></span>
@@ -82,6 +97,7 @@ import { SettingsService } from '../state/settings.service';
 })
 export class ProfilePage {
   readonly settings = inject(SettingsService);
+  readonly mobile = isMobileDevice();
   private readonly library = inject(RhythmLibrary);
   readonly rhythms = this.library.all;
   readonly rhythm = computed(() => this.library.get(this.settings.lastRhythmId()));
