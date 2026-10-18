@@ -1,4 +1,7 @@
 import { Velocity, VoiceId } from '../data/types';
+import { getSoundSet } from './sound-set';
+import { noise, tone } from './synth-core';
+import { playVoiceV2 } from './synth-v2';
 
 /**
  * Tous les sons sont synthétisés (oscillateurs + bruit filtré) : aucun sample à charger,
@@ -6,79 +9,16 @@ import { Velocity, VoiceId } from '../data/types';
  * par un vrai sample plus tard sans toucher au séquenceur.
  */
 
-let noiseBuffer: AudioBuffer | null = null;
-let noiseRate = 0;
-
-function getNoise(ctx: AudioContext): AudioBuffer {
-  if (!noiseBuffer || noiseRate !== ctx.sampleRate) {
-    const length = Math.floor(ctx.sampleRate * 1.5);
-    const data = new Float32Array(length);
-    for (let i = 0; i < length; i++) data[i] = Math.random() * 2 - 1;
-    noiseBuffer = ctx.createBuffer(1, length, ctx.sampleRate);
-    noiseBuffer.copyToChannel(data, 0);
-    noiseRate = ctx.sampleRate;
-  }
-  return noiseBuffer;
-}
-
-function envelope(ctx: AudioContext, out: AudioNode, t: number, peak: number, decay: number, attack = 0.002): GainNode {
-  const g = ctx.createGain();
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.linearRampToValueAtTime(Math.max(0.0002, peak), t + attack);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + attack + decay);
-  g.connect(out);
-  return g;
-}
-
-interface ToneOpts {
-  type: OscillatorType;
-  f0: number;
-  f1?: number;
-  glide?: number;
-  decay: number;
-  peak: number;
-}
-
-function tone(ctx: AudioContext, out: AudioNode, t: number, o: ToneOpts): void {
-  const osc = ctx.createOscillator();
-  osc.type = o.type;
-  osc.frequency.setValueAtTime(o.f0, t);
-  if (o.f1 && o.f1 !== o.f0) {
-    osc.frequency.exponentialRampToValueAtTime(o.f1, t + (o.glide ?? 0.04));
-  }
-  const g = envelope(ctx, out, t, o.peak, o.decay);
-  osc.connect(g);
-  osc.start(t);
-  osc.stop(t + o.decay + 0.08);
-}
-
-interface NoiseOpts {
-  filter: BiquadFilterType;
-  freq: number;
-  q?: number;
-  decay: number;
-  peak: number;
-}
-
-function noise(ctx: AudioContext, out: AudioNode, t: number, o: NoiseOpts): void {
-  const src = ctx.createBufferSource();
-  src.buffer = getNoise(ctx);
-  const f = ctx.createBiquadFilter();
-  f.type = o.filter;
-  f.frequency.value = o.freq;
-  f.Q.value = o.q ?? 0.8;
-  const g = envelope(ctx, out, t, o.peak, o.decay, 0.001);
-  src.connect(f);
-  f.connect(g);
-  src.start(t, Math.random() * 0.8);
-  src.stop(t + o.decay + 0.08);
-}
-
 const VEL_GAIN: Record<Velocity, number> = { 0: 0, 1: 0.32, 2: 0.78, 3: 1 };
 const VEL_DECAY: Record<Velocity, number> = { 0: 0, 1: 0.55, 2: 0.85, 3: 1 };
 
 export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: number, vel: Velocity, volume = 1): void {
   if (vel === 0 || volume <= 0) return;
+  // Jeu de sons « b » (synth-v2) pour les instruments ; clic et cloche de repère restent ici.
+  if (getSoundSet() === 'b' && voice !== 'click' && voice !== 'bell') {
+    playVoiceV2(ctx, out, voice, t, vel, volume);
+    return;
+  }
   const v = VEL_GAIN[vel] * volume;
   const d = VEL_DECAY[vel];
 
