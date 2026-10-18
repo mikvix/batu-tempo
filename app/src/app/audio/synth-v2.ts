@@ -205,18 +205,22 @@ export function playVoiceV2(ctx: AudioContext, out: AudioNode, voice: VoiceId, t
       shaper.connect(post);
       post.connect(o);
       dest = pre;
-      tone(ctx, dest, t, { type: 'sine', f0: 400, f1: 335, glide: 0.012, decay: 0.065 * d, peak: 1.0 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 570, decay: 0.14 * d, peak: 0.75 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 760, decay: 0.1 * d, peak: 0.7 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 1230, decay: 0.16 * d, peak: 0.85 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 1460, decay: 0.16 * d, peak: 0.6 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 1750, decay: 0.16 * d, peak: 0.5 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 2030, decay: 0.16 * d, peak: 0.45 * g });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 3500, q: 0.8, decay: 0.18 * d, peak: 0.6 * v });
-      noise(ctx, o, t, { filter: 'highpass', freq: 6000, decay: 0.14 * d, peak: 0.25 * v });
+      // Les partiels graves portent le corps « plastique » (triangle = harmoniques impaires qui
+      // s'éteignent vite) ; les partiels aigus sont présents mais brefs et discrets, sinon le son
+      // vire à la cloche. Chaque partiel descend légèrement en hauteur à l'attaque.
+      tone(ctx, dest, t, { type: 'triangle', f0: 400, f1: 335, glide: 0.012, decay: 0.09 * d, peak: 1.1 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 610, f1: 565, glide: 0.015, decay: 0.12 * d, peak: 0.8 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 810, f1: 755, glide: 0.015, decay: 0.09 * d, peak: 0.7 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1230, decay: 0.07 * d, peak: 0.45 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1460, decay: 0.07 * d, peak: 0.3 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1750, decay: 0.06 * d, peak: 0.22 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 2030, decay: 0.06 * d, peak: 0.15 * g });
+      // Bruit de peau : médium-aigu plutôt que brillant, court.
+      noise(ctx, o, t, { filter: 'bandpass', freq: 2600, q: 0.6, decay: 0.12 * d, peak: 0.45 * v });
+      noise(ctx, o, t, { filter: 'bandpass', freq: 900, q: 1, decay: 0.05, peak: 0.3 * v });
       // Impact de la baguette : large bande, 5 ms.
-      noise(ctx, o, t, { filter: 'lowpass', freq: 6000, decay: 0.005, peak: 0.5 * v });
-      if (accent) noise(ctx, o, t, { filter: 'bandpass', freq: 4200, q: 1.5, decay: 0.05, peak: 0.3 * v });
+      noise(ctx, o, t, { filter: 'lowpass', freq: 5000, decay: 0.005, peak: 0.5 * v });
+      if (accent) noise(ctx, o, t, { filter: 'bandpass', freq: 3600, q: 1.5, decay: 0.04, peak: 0.25 * v });
       break;
     }
     case 'timbal': {
