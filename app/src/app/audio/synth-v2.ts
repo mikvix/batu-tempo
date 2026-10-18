@@ -187,37 +187,36 @@ export function playVoiceV2(ctx: AudioContext, out: AudioNode, voice: VoiceId, t
       break;
     }
     case 'repique': {
-      // Mesuré sur un enregistrement de bloco : peau nylon très tendue, série de partiels presque
-      // harmonique (≈ 195, 390, 590, 780 Hz) où les 3ᵉ et 4ᵉ dominent à l'attaque, peu de bruit,
-      // chaque partiel s'éteignant en 100 à 300 ms. Le coup de main (ghost) est étouffé et court.
-      const o = voiceOut(ctx, out, 0.12);
-      if (vel === 1) {
-        tone(ctx, o, t, { type: 'sine', f0: 230, f1: 195, glide: 0.02, decay: 0.06, peak: 0.45 * volume });
-        noise(ctx, o, t, { filter: 'lowpass', freq: 1500, decay: 0.02, peak: 0.25 * volume });
-        break;
-      }
-      head(ctx, o, t, {
-        f0: 225,
-        f1: 196,
-        glide: 0.025,
-        decay: 0.26 * d,
-        peak: 0.42 * v,
-        drive: 0.5,
-        partials: [
-          { ratio: 2.02, gain: 0.75, decay: 0.17 },
-          { ratio: 3.05, gain: 1.1, decay: 0.15 },
-          { ratio: 4.1, gain: 0.8, decay: 0.11 },
-          { ratio: 5.3, gain: 0.3, decay: 0.07 },
-          { ratio: 7.1, gain: 0.15, decay: 0.04 },
-        ],
-      });
-      // Baguette : claquement bref, pas trop brillant.
-      noise(ctx, o, t, { filter: 'lowpass', freq: 4500, decay: 0.008, peak: 0.45 * v });
-      if (accent) {
-        // Rim : attaque métallique en plus.
-        tone(ctx, o, t, { type: 'square', f0: 1900, f1: 1700, glide: 0.01, decay: 0.03, peak: 0.1 * v });
-        noise(ctx, o, t, { filter: 'bandpass', freq: 3800, q: 1.2, decay: 0.03, peak: 0.3 * v });
-      }
+      // Mesuré sur un passage de repique seul : son bref et brillant. Partiels de membrane à ≈ 350,
+      // 570, 760, 1230, 1460, 1750, 2030 Hz, tous à peu près au même niveau, et autant d'énergie en
+      // bruit entre 2,5 et 5 kHz ; le fondamental s'éteint en 16 ms (−20 dB), les aigus en 40 ms,
+      // tout est sous −30 dB après 100 ms. Les rebonds (ghost) sonnent pareil, moins fort.
+      // (L'enveloppe atteint −80 dB à `decay` : −20 dB correspond à decay / 4.)
+      const o = voiceOut(ctx, out, 0.1);
+      const g = 0.22 * v;
+      let dest: AudioNode = o;
+      const shaper = ctx.createWaveShaper();
+      shaper.curve = getDriveCurve();
+      const pre = ctx.createGain();
+      pre.gain.value = 1.4;
+      const post = ctx.createGain();
+      post.gain.value = 0.8;
+      pre.connect(shaper);
+      shaper.connect(post);
+      post.connect(o);
+      dest = pre;
+      tone(ctx, dest, t, { type: 'sine', f0: 400, f1: 335, glide: 0.012, decay: 0.065 * d, peak: 1.0 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 570, decay: 0.14 * d, peak: 0.75 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 760, decay: 0.1 * d, peak: 0.7 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1230, decay: 0.16 * d, peak: 0.85 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1460, decay: 0.16 * d, peak: 0.6 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1750, decay: 0.16 * d, peak: 0.5 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 2030, decay: 0.16 * d, peak: 0.45 * g });
+      noise(ctx, o, t, { filter: 'bandpass', freq: 3500, q: 0.8, decay: 0.18 * d, peak: 0.6 * v });
+      noise(ctx, o, t, { filter: 'highpass', freq: 6000, decay: 0.14 * d, peak: 0.25 * v });
+      // Impact de la baguette : large bande, 5 ms.
+      noise(ctx, o, t, { filter: 'lowpass', freq: 6000, decay: 0.005, peak: 0.5 * v });
+      if (accent) noise(ctx, o, t, { filter: 'bandpass', freq: 4200, q: 1.5, decay: 0.05, peak: 0.3 * v });
       break;
     }
     case 'timbal': {
