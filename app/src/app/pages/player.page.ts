@@ -10,7 +10,6 @@ import { BeatRuler, GRID_LEFT, InstrumentRow } from '../shared/pattern-grid';
 import { TempoControl } from '../shared/tempo-control';
 import { Header, PlayButton } from '../shared/ui';
 import { RhythmLibrary } from '../state/rhythm-library.service';
-import { SoundSet } from '../audio/sound-set';
 import { SettingsService } from '../state/settings.service';
 import { ConfirmService } from '../state/confirm.service';
 import { ToastService } from '../state/toast.service';
@@ -87,14 +86,6 @@ import { ToastService } from '../state/toast.service';
           <p class="muted" style="margin-top: 14px">{{ rhythm().description }}</p>
         }
 
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px">
-          <span class="label">Sons</span>
-          <div class="chip-row" style="flex: 1">
-            <button class="chip chip--grow" type="button" [class.chip--active]="soundSet() === 'a'" (click)="setSoundSet('a')">A · actuels</button>
-            <button class="chip chip--grow" type="button" [class.chip--active]="soundSet() === 'b'" (click)="setSoundSet('b')">B · retravaillés</button>
-          </div>
-        </div>
-
         <div class="chip-row" style="margin-top: 16px">
           @if (isCustom()) {
             <a class="action-btn" style="height: 48px" [routerLink]="['/editeur', rhythm().id]">
@@ -138,7 +129,6 @@ export class PlayerPage {
   private readonly settings = inject(SettingsService);
   private readonly router = inject(Router);
   private readonly library = inject(RhythmLibrary);
-  readonly soundSet = this.settings.soundSet;
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmService);
 
@@ -254,10 +244,5 @@ export class PlayerPage {
 
   openInstrument(instrumentId: string): void {
     void this.router.navigate(['/instrument', this.rhythm().id, instrumentId]);
-  }
-
-  /** Comparaison A/B : la bascule s'applique dès la note suivante, lecture en cours comprise. */
-  setSoundSet(set: SoundSet): void {
-    this.settings.update({ soundSet: set });
   }
 }

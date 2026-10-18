@@ -1,6 +1,5 @@
-import { Injectable, computed, effect, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 
-import { setSoundSet, SoundSet } from '../audio/sound-set';
 import { RHYTHMS } from '../data/rhythms';
 import { readJson, writeJson } from './storage';
 
@@ -21,8 +20,6 @@ export interface Settings {
   headphones: boolean;
   /** Comment les frappes sont captées dans les exercices guidés. */
   inputMode: InputMode;
-  /** Jeu de sons : « a » d'origine, « b » retravaillé (comparaison A/B). */
-  soundSet: SoundSet;
 }
 
 const KEY = 'batu-tempo.settings.v1';
@@ -36,7 +33,6 @@ const DEFAULTS: Settings = {
   micSensitivity: 3,
   headphones: false,
   inputMode: 'micro',
-  soundSet: 'a',
 };
 
 /** Réglages persistés dans le localStorage du navigateur. */
@@ -46,12 +42,6 @@ export class SettingsService {
 
   readonly lastRhythmId = computed(() => this.settings().lastRhythmId);
   readonly grooveBars = computed(() => this.settings().grooveBars);
-  readonly soundSet = computed(() => this.settings().soundSet);
-
-  constructor() {
-    // Le synthétiseur lit le jeu de sons hors Angular : on le tient à jour depuis le réglage.
-    effect(() => setSoundSet(this.soundSet()));
-  }
 
   update(patch: Partial<Settings> | ((s: Settings) => Partial<Settings>)): void {
     const current = this.settings();

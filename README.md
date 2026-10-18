@@ -54,7 +54,8 @@ app/src/app/
     tempo-solo.page.ts       « Tiens le tempo seul » : le groupe se tait, on mesure la dérive
   audio/
     engine.ts                AudioContext unique, sortie passée par un limiteur
-    synth.ts                 Sons synthétisés de chaque instrument
+    synth.ts                 Sons synthétisés de chaque instrument (peaux à partiels, cloches, bruits, petite salle)
+    synth-core.ts            Briques : bruit, enveloppe, oscillateur glissant, bruit filtré
     sequencer.ts             Séquenceur 16 pas, planification anticipée, mesures fournies par un provider
     player.service.ts        Service Angular (signaux) autour du séquenceur global
     mic.service.ts           Micro + détecteur de frappes (AudioWorklet public/onset-processor.js)

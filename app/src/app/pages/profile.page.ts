@@ -59,16 +59,6 @@ import { SettingsService } from '../state/settings.service';
           </div>
         </div>
 
-        <p class="label" style="margin-top: 26px">Sons</p>
-        <div class="card stack" style="margin-top: 10px; gap: 10px">
-          <span class="strong">Jeu de sons (comparaison A/B)</span>
-          <div class="chip-row">
-            <button class="chip chip--grow" type="button" [class.chip--active]="settings.soundSet() === 'a'" (click)="settings.update({ soundSet: 'a' })">A · actuels</button>
-            <button class="chip chip--grow" type="button" [class.chip--active]="settings.soundSet() === 'b'" (click)="settings.update({ soundSet: 'b' })">B · retravaillés</button>
-          </div>
-          <span class="muted small">La bascule est aussi dans le lecteur, pour comparer pendant la lecture.</span>
-        </div>
-
         <p class="label" style="margin-top: 26px">Micro</p>
         <a class="list-card" style="margin-top: 10px" routerLink="/micro" [queryParams]="{ retour: '/profil' }">
           <span class="icon-box" style="color: var(--reprise)"><app-icon name="mic" /></span>
