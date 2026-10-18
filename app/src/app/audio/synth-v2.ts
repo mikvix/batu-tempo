@@ -146,21 +146,21 @@ export function playVoiceV2(ctx: AudioContext, out: AudioNode, voice: VoiceId, t
   switch (voice) {
     case 'surdo1': {
       const o = voiceOut(ctx, out, 0.14);
-      head(ctx, o, t, { f0: 96, f1: 50, glide: 0.07, decay: 1.0 * d, peak: 0.95 * v, drive: 0.8, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.3 }, { ratio: 2.3, gain: 0.08, decay: 0.12 }] });
+      head(ctx, o, t, { f0: 105, f1: 58, glide: 0.07, decay: 0.8 * d, peak: 0.95 * v, drive: 0.8, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.3 }, { ratio: 2.3, gain: 0.08, decay: 0.12 }] });
       noise(ctx, o, t, { filter: 'lowpass', freq: 420, decay: 0.045, peak: 0.55 * v });
       noise(ctx, o, t, { filter: 'bandpass', freq: 1800, q: 0.8, decay: 0.012, peak: 0.16 * v });
       break;
     }
     case 'surdo2': {
       const o = voiceOut(ctx, out, 0.14);
-      head(ctx, o, t, { f0: 125, f1: 66, glide: 0.06, decay: 0.8 * d, peak: 0.9 * v, drive: 0.7, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.26 }, { ratio: 2.3, gain: 0.08, decay: 0.1 }] });
+      head(ctx, o, t, { f0: 135, f1: 76, glide: 0.06, decay: 0.65 * d, peak: 0.9 * v, drive: 0.7, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.26 }, { ratio: 2.3, gain: 0.08, decay: 0.1 }] });
       noise(ctx, o, t, { filter: 'lowpass', freq: 520, decay: 0.04, peak: 0.5 * v });
       noise(ctx, o, t, { filter: 'bandpass', freq: 2000, q: 0.8, decay: 0.012, peak: 0.16 * v });
       break;
     }
     case 'surdo3': {
       const o = voiceOut(ctx, out, 0.12);
-      head(ctx, o, t, { f0: 160, f1: 88, glide: 0.05, decay: 0.55 * d, peak: 0.85 * v, drive: 0.6, partials: [{ ratio: 1.58, gain: 0.25, decay: 0.2 }, { ratio: 2.4, gain: 0.1, decay: 0.08 }] });
+      head(ctx, o, t, { f0: 170, f1: 96, glide: 0.05, decay: 0.45 * d, peak: 0.85 * v, drive: 0.6, partials: [{ ratio: 1.58, gain: 0.25, decay: 0.2 }, { ratio: 2.4, gain: 0.1, decay: 0.08 }] });
       noise(ctx, o, t, { filter: 'lowpass', freq: 700, decay: 0.035, peak: 0.45 * v });
       noise(ctx, o, t, { filter: 'bandpass', freq: 2400, q: 0.8, decay: 0.012, peak: 0.18 * v });
       break;
@@ -187,12 +187,36 @@ export function playVoiceV2(ctx: AudioContext, out: AudioNode, voice: VoiceId, t
       break;
     }
     case 'repique': {
+      // Mesuré sur un enregistrement de bloco : peau nylon très tendue, série de partiels presque
+      // harmonique (≈ 195, 390, 590, 780 Hz) où les 3ᵉ et 4ᵉ dominent à l'attaque, peu de bruit,
+      // chaque partiel s'éteignant en 100 à 300 ms. Le coup de main (ghost) est étouffé et court.
       const o = voiceOut(ctx, out, 0.12);
-      head(ctx, o, t, { f0: 540, f1: 300, glide: 0.03, decay: 0.2 * d, peak: 0.6 * v, drive: 0.4, partials: [{ ratio: 1.5, gain: 0.3, decay: 0.08 }] });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 3200, q: 1, decay: 0.09 * d, peak: 0.5 * v });
+      if (vel === 1) {
+        tone(ctx, o, t, { type: 'sine', f0: 230, f1: 195, glide: 0.02, decay: 0.06, peak: 0.45 * volume });
+        noise(ctx, o, t, { filter: 'lowpass', freq: 1500, decay: 0.02, peak: 0.25 * volume });
+        break;
+      }
+      head(ctx, o, t, {
+        f0: 225,
+        f1: 196,
+        glide: 0.025,
+        decay: 0.26 * d,
+        peak: 0.42 * v,
+        drive: 0.5,
+        partials: [
+          { ratio: 2.02, gain: 0.75, decay: 0.17 },
+          { ratio: 3.05, gain: 1.1, decay: 0.15 },
+          { ratio: 4.1, gain: 0.8, decay: 0.11 },
+          { ratio: 5.3, gain: 0.3, decay: 0.07 },
+          { ratio: 7.1, gain: 0.15, decay: 0.04 },
+        ],
+      });
+      // Baguette : claquement bref, pas trop brillant.
+      noise(ctx, o, t, { filter: 'lowpass', freq: 4500, decay: 0.008, peak: 0.45 * v });
       if (accent) {
-        noise(ctx, o, t, { filter: 'highpass', freq: 5000, decay: 0.05, peak: 0.35 * v });
-        tone(ctx, o, t, { type: 'square', f0: 2200, decay: 0.012, peak: 0.1 * v });
+        // Rim : attaque métallique en plus.
+        tone(ctx, o, t, { type: 'square', f0: 1900, f1: 1700, glide: 0.01, decay: 0.03, peak: 0.1 * v });
+        noise(ctx, o, t, { filter: 'bandpass', freq: 3800, q: 1.2, decay: 0.03, peak: 0.3 * v });
       }
       break;
     }
