@@ -36,32 +36,38 @@ function getDriveCurve(): Float32Array<ArrayBuffer> {
   return driveCurve;
 }
 
-/** Petite salle : réponse impulsionnelle synthétique (bruit décroissant), une par sortie. */
+/**
+ * Petite salle, une par sortie. Pas de convolution (trop lourde pour le fil audio d'un téléphone :
+ * ça grésille) : quatre lignes à retard en parallèle, rebouclées à travers un passe-bas, soit une
+ * poignée de nœuds créés une seule fois.
+ */
 const rooms = new WeakMap<AudioNode, GainNode>();
 
 function getRoom(ctx: AudioContext, out: AudioNode): GainNode {
   let send = rooms.get(out);
   if (send) return send;
-  const seconds = 0.45;
-  const length = Math.floor(ctx.sampleRate * seconds);
-  const impulse = ctx.createBuffer(2, length, ctx.sampleRate);
-  for (let c = 0; c < 2; c++) {
-    const data = impulse.getChannelData(c);
-    for (let i = 0; i < length; i++) {
-      // Décroissance exponentielle, un peu plus sombre vers la fin (moyenne glissante grossière).
-      const env = Math.exp((-6 * i) / length);
-      data[i] = (Math.random() * 2 - 1) * env;
-    }
-    for (let i = 1; i < length; i++) data[i] = data[i] * 0.6 + data[i - 1] * 0.4;
-  }
-  const convolver = ctx.createConvolver();
-  convolver.buffer = impulse;
-  const wet = ctx.createGain();
-  wet.gain.value = 0.9;
   send = ctx.createGain();
   send.gain.value = 1;
-  send.connect(convolver);
-  convolver.connect(wet);
+  const wet = ctx.createGain();
+  wet.gain.value = 0.35;
+  // Léger pré-retard : la salle ne se confond pas avec l'attaque.
+  const pre = ctx.createDelay(0.1);
+  pre.delayTime.value = 0.014;
+  send.connect(pre);
+  for (const seconds of [0.0297, 0.0371, 0.0411, 0.0437]) {
+    const delay = ctx.createDelay(0.1);
+    delay.delayTime.value = seconds;
+    const feedback = ctx.createGain();
+    feedback.gain.value = 0.62;
+    const damp = ctx.createBiquadFilter();
+    damp.type = 'lowpass';
+    damp.frequency.value = 3200;
+    pre.connect(delay);
+    delay.connect(damp);
+    damp.connect(feedback);
+    feedback.connect(delay);
+    damp.connect(wet);
+  }
   wet.connect(out);
   rooms.set(out, send);
   return send;
@@ -154,29 +160,26 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
   switch (voice) {
     case 'surdo1': {
       const o = voiceOut(ctx, out, 0.14);
-      head(ctx, o, t, { f0: 105, f1: 58, glide: 0.07, decay: 0.8 * d, peak: 0.95 * v, drive: 0.8, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.3 }, { ratio: 2.3, gain: 0.08, decay: 0.12 }] });
-      noise(ctx, o, t, { filter: 'lowpass', freq: 420, decay: 0.045, peak: 0.55 * v });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 1800, q: 0.8, decay: 0.012, peak: 0.16 * v });
+      head(ctx, o, t, { f0: 105, f1: 58, glide: 0.07, decay: 0.8 * d, peak: 0.95 * v, drive: 0.8, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.3 }] });
+      noise(ctx, o, t, { filter: 'lowpass', freq: 900, decay: 0.04, peak: 0.55 * v });
       break;
     }
     case 'surdo2': {
       const o = voiceOut(ctx, out, 0.14);
-      head(ctx, o, t, { f0: 135, f1: 76, glide: 0.06, decay: 0.65 * d, peak: 0.9 * v, drive: 0.7, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.26 }, { ratio: 2.3, gain: 0.08, decay: 0.1 }] });
-      noise(ctx, o, t, { filter: 'lowpass', freq: 520, decay: 0.04, peak: 0.5 * v });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 2000, q: 0.8, decay: 0.012, peak: 0.16 * v });
+      head(ctx, o, t, { f0: 135, f1: 76, glide: 0.06, decay: 0.65 * d, peak: 0.9 * v, drive: 0.7, partials: [{ ratio: 1.58, gain: 0.22, decay: 0.26 }] });
+      noise(ctx, o, t, { filter: 'lowpass', freq: 1000, decay: 0.035, peak: 0.5 * v });
       break;
     }
     case 'surdo3': {
       const o = voiceOut(ctx, out, 0.12);
-      head(ctx, o, t, { f0: 170, f1: 96, glide: 0.05, decay: 0.45 * d, peak: 0.85 * v, drive: 0.6, partials: [{ ratio: 1.58, gain: 0.25, decay: 0.2 }, { ratio: 2.4, gain: 0.1, decay: 0.08 }] });
-      noise(ctx, o, t, { filter: 'lowpass', freq: 700, decay: 0.035, peak: 0.45 * v });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 2400, q: 0.8, decay: 0.012, peak: 0.18 * v });
+      head(ctx, o, t, { f0: 170, f1: 96, glide: 0.05, decay: 0.45 * d, peak: 0.85 * v, drive: 0.6, partials: [{ ratio: 1.58, gain: 0.25, decay: 0.2 }] });
+      noise(ctx, o, t, { filter: 'lowpass', freq: 1200, decay: 0.03, peak: 0.45 * v });
       break;
     }
     case 'alfaia': {
       // Peau de chèvre tendue à la corde : moins de sustain, plus de bruit de frappe.
       const o = voiceOut(ctx, out, 0.16);
-      head(ctx, o, t, { f0: 115, f1: 64, glide: 0.05, decay: 0.5 * d, peak: 0.9 * v, drive: 0.9, partials: [{ ratio: 1.55, gain: 0.3, decay: 0.18 }, { ratio: 2.2, gain: 0.12, decay: 0.09 }] });
+      head(ctx, o, t, { f0: 115, f1: 64, glide: 0.05, decay: 0.5 * d, peak: 0.9 * v, drive: 0.9, partials: [{ ratio: 1.55, gain: 0.3, decay: 0.18 }] });
       noise(ctx, o, t, { filter: 'lowpass', freq: 1400, decay: 0.07, peak: 0.6 * v });
       break;
     }
@@ -221,11 +224,9 @@ export function playVoice(ctx: AudioContext, out: AudioNode, voice: VoiceId, t: 
       tone(ctx, dest, t, { type: 'sine', f0: 810, f1: 755, glide: 0.015, decay: 0.09 * d, peak: 0.7 * g });
       tone(ctx, dest, t, { type: 'sine', f0: 1230, decay: 0.07 * d, peak: 0.45 * g });
       tone(ctx, dest, t, { type: 'sine', f0: 1460, decay: 0.07 * d, peak: 0.3 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 1750, decay: 0.06 * d, peak: 0.22 * g });
-      tone(ctx, dest, t, { type: 'sine', f0: 2030, decay: 0.06 * d, peak: 0.15 * g });
+      tone(ctx, dest, t, { type: 'sine', f0: 1880, decay: 0.06 * d, peak: 0.3 * g });
       // Bruit de peau : médium-aigu plutôt que brillant, court.
       noise(ctx, o, t, { filter: 'bandpass', freq: 2600, q: 0.6, decay: 0.12 * d, peak: 0.45 * v });
-      noise(ctx, o, t, { filter: 'bandpass', freq: 900, q: 1, decay: 0.05, peak: 0.3 * v });
       // Impact de la baguette : large bande, 5 ms.
       noise(ctx, o, t, { filter: 'lowpass', freq: 5000, decay: 0.005, peak: 0.5 * v });
       if (accent) noise(ctx, o, t, { filter: 'bandpass', freq: 3600, q: 1.5, decay: 0.04, peak: 0.25 * v });
