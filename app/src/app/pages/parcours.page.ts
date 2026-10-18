@@ -10,9 +10,8 @@ import { RhythmLibrary } from '../state/rhythm-library.service';
 import { SettingsService } from '../state/settings.service';
 
 /**
- * Parcours guidé : une suite d'étapes sur le rythme et l'instrument choisis. Chaque étape se
- * débloque avec au moins une étoile à la précédente ; la mission du jour pointe la prochaine à
- * travailler.
+ * Parcours guidé : une suite d'étapes sur le rythme et l'instrument choisis, toutes accessibles
+ * d'emblée ; la mission du jour pointe la prochaine à travailler (la première sans ses trois étoiles).
  */
 @Component({
   selector: 'app-parcours-page',
@@ -86,36 +85,26 @@ import { SettingsService } from '../state/settings.service';
         <div class="steps">
           <i class="steps__rail"></i>
           @for (s of steps(); track s.step.id) {
-            @if (s.locked) {
-              <div class="step step--locked">
-                <span class="node"><app-icon name="lock" [size]="20" /></span>
-                <div class="grow stack" style="gap: 2px">
-                  <span class="strong">{{ s.step.title }}</span>
-                  <span class="muted small">{{ s.step.subtitle }}</span>
-                </div>
-              </div>
-            } @else {
-              <a class="step" [class.step--current]="s.current" [routerLink]="s.link.path" [queryParams]="s.link.query">
-                <span class="node" [class.node--done]="s.stars > 0" [class.node--current]="s.current">
-                  @if (s.current) {
-                    <app-icon name="play" [size]="20" [filled]="true" />
-                  } @else if (s.stars > 0) {
-                    <app-icon name="check" [size]="22" />
-                  } @else {
-                    <app-icon name="play" [size]="20" [filled]="true" />
-                  }
-                </span>
-                <div class="grow stack" style="gap: 2px">
-                  <span class="strong">{{ s.step.title }}</span>
-                  <span class="muted small">{{ s.step.subtitle }}</span>
-                </div>
-                @if (s.stars > 0) {
-                  <app-stars [count]="s.stars" />
-                } @else if (s.current) {
-                  <span class="small" style="color: var(--accent); font-weight: 700">À faire</span>
+            <a class="step" [class.step--current]="s.current" [routerLink]="s.link.path" [queryParams]="s.link.query">
+              <span class="node" [class.node--done]="s.stars > 0" [class.node--current]="s.current">
+                @if (s.current) {
+                  <app-icon name="play" [size]="20" [filled]="true" />
+                } @else if (s.stars > 0) {
+                  <app-icon name="check" [size]="22" />
+                } @else {
+                  <app-icon name="play" [size]="20" [filled]="true" />
                 }
-              </a>
-            }
+              </span>
+              <div class="grow stack" style="gap: 2px">
+                <span class="strong">{{ s.step.title }}</span>
+                <span class="muted small">{{ s.step.subtitle }}</span>
+              </div>
+              @if (s.stars > 0) {
+                <app-stars [count]="s.stars" />
+              } @else if (s.current) {
+                <span class="small" style="color: var(--accent); font-weight: 700">À faire</span>
+              }
+            </a>
           }
         </div>
       </div>
@@ -135,7 +124,6 @@ import { SettingsService } from '../state/settings.service';
     .steps__rail { position: absolute; left: 27px; top: 28px; bottom: 28px; width: 3px; border-radius: 2px; background: var(--surface-2); }
     .step { position: relative; display: flex; align-items: center; gap: 14px; padding: 6px 12px 6px 0; border-radius: 18px; border: 1px solid transparent; }
     .step--current { background: var(--surface); border-color: var(--accent); }
-    .step--locked { opacity: 0.5; }
     .node { width: 56px; height: 56px; border-radius: 50%; background: var(--surface-2); color: var(--muted); display: grid; place-items: center; flex: none; }
     .node--done { background: var(--reprise); color: var(--on-reprise); }
     .node--current { background: var(--accent); color: var(--on-accent); box-shadow: 0 0 0 6px rgba(242,177,52,0.18); }
@@ -157,20 +145,17 @@ export class ParcoursPage {
     const i = this.mine().id;
     // Lecture des étoiles : dépend du signal de progression via starsFor.
     this.progress.xp();
-    let previous = 1;
     let currentFound = false;
     return PARCOURS.map((step) => {
       const stars = this.progress.starsFor(r, i, step.id);
-      const locked = previous === 0;
-      const current = !locked && !currentFound && stars === 0;
+      const current = !currentFound && stars === 0;
       if (current) currentFound = true;
-      previous = stars;
-      return { step, stars, locked, current, link: stepLink(step, r, i) };
+      return { step, stars, current, link: stepLink(step, r, i) };
     });
   });
 
   /** Première étape débloquée sans ses trois étoiles. */
-  readonly mission = computed(() => this.steps().find((s) => !s.locked && s.stars < 3) ?? null);
+  readonly mission = computed(() => this.steps().find((s) => s.stars < 3) ?? null);
 
   readonly micCard = computed(() => {
     const s = this.settings.settings();

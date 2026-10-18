@@ -6,15 +6,12 @@ export interface ParcoursStep {
   title: string;
   subtitle: string;
   kind: StepKind;
-  /** Pour les jeux : vitesse en % du tempo du rythme, nombre de mesures, motif imposé. */
+  /** Pour les jeux : vitesse en % du tempo du rythme, nombre de mesures. */
   speed?: number;
   bars?: number;
-  /** « temps » = frapper les quatre temps au lieu du pattern de l'instrument. */
-  motif?: 'temps';
 }
 
 export const PARCOURS: ParcoursStep[] = [
-  { id: 'temps', title: 'Frapper les quatre temps', subtitle: 'Se caler sur la pulsation du groupe', kind: 'jeu', speed: 70, bars: 4, motif: 'temps' },
   { id: 'groove-70', title: 'Groove à 70 %', subtitle: 'Ta partie, au ralenti', kind: 'jeu', speed: 70, bars: 8 },
   { id: 'groove-85', title: 'Groove à 85 %', subtitle: 'On se rapproche du tempo', kind: 'jeu', speed: 85, bars: 8 },
   { id: 'appel', title: 'Répondre à l’appel', subtitle: 'Reproduire l’appel du repique', kind: 'appel' },
@@ -28,7 +25,6 @@ export function stepLink(step: ParcoursStep, rhythmId: string, instrumentId: str
   if (step.kind === 'jeu') {
     query['vitesse'] = step.speed ?? 70;
     query['mesures'] = step.bars ?? 8;
-    if (step.motif) query['motif'] = step.motif;
     return { path: ['/jeu', rhythmId], query };
   }
   return { path: [step.kind === 'appel' ? '/appel' : '/defi-tempo', rhythmId], query };
