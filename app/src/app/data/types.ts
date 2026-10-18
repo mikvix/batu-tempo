@@ -29,6 +29,8 @@ export interface PatternVariation {
    * Un pattern peut couvrir plusieurs mesures (32, 48, 64 pas…) : il boucle sur sa propre longueur.
    */
   pattern: string;
+  /** Doigté de cette variation, même notation que `InstrumentDef.hands`. */
+  hands?: string;
 }
 
 export interface InstrumentDef {
@@ -39,7 +41,12 @@ export interface InstrumentDef {
   role: string;
   voice: VoiceId;
   pattern: string;
-  /** Les mains sont affichées pour les instruments joués à la baguette alternée */
+  /**
+   * Doigté, une lettre par case du pattern : D main droite, G main gauche, « . » non précisé
+   * (complété par le doigté par défaut de la voix). Absent = doigté par défaut.
+   */
+  hands?: string;
+  /** Force l'affichage du doigté (sinon il dépend de la voix, voir data/hands.ts). */
   showHands?: boolean;
   variations?: PatternVariation[];
 }

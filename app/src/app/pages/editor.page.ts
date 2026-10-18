@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { buildBarSpec, PlayerService } from '../audio/player.service';
 import { defaultBreak, fitCells, INSTRUMENT_PRESETS, newCustomId, sanitizeRhythm, toPattern } from '../data/custom';
 import { shareRhythm } from '../data/share';
+import { Hand, handsFor, handsToString, parseHands, showsHands } from '../data/hands';
 import { barsOf, parsePattern, PatternVariation, RhythmDef, SILENT_BAR, STEPS_PER_BAR, Velocity, VoiceId } from '../data/types';
 import { Icon } from '../shared/icon';
 import { NEXT_VELOCITY, StepEditor } from '../shared/step-editor';
@@ -19,6 +20,8 @@ interface DraftInstrument {
   voice: VoiceId;
   role: string;
   cells: Velocity[];
+  /** Doigté choisi case par case ('' = par défaut de la voix), parallèle à `cells`. */
+  hands: Hand[];
   /** Variations de l'instrument d'origine : l'éditeur ne les modifie pas mais les conserve. */
   variations?: PatternVariation[];
 }
@@ -38,6 +41,13 @@ interface Draft {
 
 type Section = 'groove' | 'break';
 
+/** Doigté ramené à `bars` mesures (tronqué ou complété de cases « par défaut »). */
+function fitHands(hands: Hand[], bars: number): Hand[] {
+  const out = hands.slice(0, bars * STEPS_PER_BAR);
+  while (out.length < bars * STEPS_PER_BAR) out.push('');
+  return out;
+}
+
 const BAR_CHOICES = [1, 2, 4];
 const BREAK_CHOICES = [1, 2];
 
@@ -56,9 +66,9 @@ function uniqueKey(name: string, taken: Set<string>): string {
 
 function newDraft(): Draft {
   const instruments: DraftInstrument[] = [
-    { key: 'surdo1', name: 'Surdo 1', voice: 'surdo1', role: 'marcação', cells: parsePattern('.... X... .... X...') },
-    { key: 'surdo2', name: 'Surdo 2', voice: 'surdo2', role: 'resposta', cells: parsePattern('X... .... X... ....') },
-    { key: 'caixa', name: 'Caixa', voice: 'caixa', role: 'tapis', cells: parsePattern('X.x. x.x. X.x. x.x.') },
+    { key: 'surdo1', name: 'Surdo 1', voice: 'surdo1', role: 'marcação', cells: parsePattern('.... X... .... X...'), hands: fitHands([], 1) },
+    { key: 'surdo2', name: 'Surdo 2', voice: 'surdo2', role: 'resposta', cells: parsePattern('X... .... X... ....'), hands: fitHands([], 1) },
+    { key: 'caixa', name: 'Caixa', voice: 'caixa', role: 'tapis', cells: parsePattern('X.x. x.x. X.x. x.x.'), hands: fitHands([], 1) },
   ];
   const brk = parsePattern('X... X... X... X... | X... .... .... ....');
   return {
@@ -86,6 +96,7 @@ function draftFrom(r: RhythmDef, asCopy: boolean): Draft {
     voice: i.voice,
     role: i.role,
     cells: fitCells(parsePattern(i.pattern), bars),
+    hands: fitHands(i.hands ? parseHands(i.hands) : [], bars),
     variations: i.variations,
   }));
   const breakCells: Record<string, Velocity[]> = {};
@@ -137,6 +148,7 @@ function toRhythm(d: Draft, id: string): RhythmDef {
       role: i.role,
       voice: i.voice,
       pattern: toPattern(i.cells),
+      hands: i.hands.some((h) => h !== '') ? handsToString(i.hands) : undefined,
       variations: i.variations,
     })),
     breaks: hasBreak ? [{ id: 'break', name: 'Break', description: '', bars }] : [],
@@ -225,7 +237,13 @@ function toRhythm(d: Draft, id: string): RhythmDef {
                 </button>
               </div>
               @if (section() === 'groove') {
-                <app-step-editor [cells]="inst.cells" [playBar]="playBar()" [playStep]="playStep()" (cellToggle)="toggleGroove(inst.key, $event)" />
+                <app-step-editor
+                  [cells]="inst.cells"
+                  [hands]="handsOf(inst)"
+                  [playBar]="playBar()"
+                  [playStep]="playStep()"
+                  (cellToggle)="toggleGroove(inst.key, $event)"
+                  (handToggle)="toggleHand(inst.key, $event)" />
               } @else {
                 <app-step-editor
                   [cells]="breakCellsOf(inst.key)"
@@ -383,7 +401,7 @@ export class EditorPage implements OnDestroy {
 
   setBars(n: number): void {
     if (this.section() === 'groove') {
-      this.draft.update((d) => ({ ...d, bars: n, instruments: d.instruments.map((i) => ({ ...i, cells: fitCells(i.cells, n) })) }));
+      this.draft.update((d) => ({ ...d, bars: n, instruments: d.instruments.map((i) => ({ ...i, cells: fitCells(i.cells, n), hands: fitHands(i.hands, n) })) }));
     } else {
       this.draft.update((d) => ({
         ...d,
@@ -404,6 +422,28 @@ export class EditorPage implements OnDestroy {
     const d = this.draft();
     const cells = d.breakCells[key] ?? [];
     return Array.from({ length: d.breakBars * STEPS_PER_BAR }, (_, k) => (cells[k] ?? 0) as Velocity);
+  }
+
+  /** Doigté affiché sous la grille d'un instrument (null si la voix n'en a pas). */
+  handsOf(inst: DraftInstrument): { hand: Hand; explicit: boolean }[] | null {
+    if (!showsHands({ voice: inst.voice })) return null;
+    const effective = handsFor(inst.voice, inst.cells, inst.hands);
+    return effective.map((hand, i) => ({ hand, explicit: inst.hands[i] !== '' }));
+  }
+
+  /** Rotation de la main d'une case : par défaut → D → G → par défaut. */
+  toggleHand(key: string, index: number): void {
+    const next: Record<Hand, Hand> = { '': 'D', D: 'G', G: '' };
+    this.draft.update((d) => ({
+      ...d,
+      instruments: d.instruments.map((inst) => {
+        if (inst.key !== key) return inst;
+        const hands = [...inst.hands];
+        hands[index] = next[hands[index] ?? ''];
+        return { ...inst, hands };
+      }),
+    }));
+    this.dirty.set(true);
   }
 
   toggleGroove(key: string, index: number): void {
@@ -446,6 +486,7 @@ export class EditorPage implements OnDestroy {
             voice: preset.voice,
             role: preset.role,
             cells: new Array<Velocity>(d.bars * STEPS_PER_BAR).fill(0),
+            hands: fitHands([], d.bars),
           },
         ],
         breakCells: { ...d.breakCells, [key]: new Array<Velocity>(d.breakBars * STEPS_PER_BAR).fill(0) },

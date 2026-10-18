@@ -10,6 +10,7 @@ import { buildTargets, expireTargets, judgeHit, Summary, summarize, Target, xpFo
 import { PARCOURS } from '../exercises/parcours';
 import { applyBacking, Backing, Feedback, restoreMix, startFrameLoop } from '../exercises/session';
 import { BeatOffsets, HitPad, Stars } from '../shared/exercise-ui';
+import { handsFor, showsHands } from '../data/hands';
 import { Icon } from '../shared/icon';
 import { Header } from '../shared/ui';
 import { ProgressService } from '../state/progress.service';
@@ -53,7 +54,7 @@ const SPEEDS = [50, 70, 85, 100];
             <i class="line"></i>
             <i class="target" [class.target--hit]="pulse()"></i>
             @for (n of notes(); track n.id) {
-              <i class="note" [class]="'note note--' + n.state" [class.note--accent]="n.accent" [style.bottom.px]="n.y" [style.opacity]="n.opacity"></i>
+              <i class="note" [class]="'note note--' + n.state" [class.note--accent]="n.accent" [style.bottom.px]="n.y" [style.opacity]="n.opacity">{{ n.hand }}</i>
             }
 
             @if (countdown(); as c) {
@@ -143,7 +144,8 @@ const SPEEDS = [50, 70, 85, 100];
     .target { position: absolute; left: 50%; bottom: 40px; width: 48px; height: 48px; margin-left: -24px; border-radius: 50%;
       border: 3px solid var(--text); opacity: 0.9; transition: box-shadow 80ms, border-color 80ms; }
     .target--hit { border-color: var(--accent); box-shadow: 0 0 0 8px rgba(242,177,52,0.25); }
-    .note { position: absolute; left: 50%; width: 32px; height: 32px; margin: 0 0 -16px -16px; border-radius: 50%; background: var(--accent-dim); }
+    .note { position: absolute; left: 50%; width: 32px; height: 32px; margin: 0 0 -16px -16px; border-radius: 50%; background: var(--accent-dim);
+      display: grid; place-items: center; font-style: normal; font-size: 13px; font-weight: 800; color: var(--bg); }
     .note--accent { width: 46px; height: 46px; margin: 0 0 -23px -23px; background: var(--accent); border: 3px solid var(--text); }
     .note--perfect { background: var(--reprise); border-color: transparent; }
     .note--good { background: var(--accent); border-color: transparent; }
@@ -231,8 +233,16 @@ export class GamePage implements OnDestroy {
     return 4 - Math.floor(t / (this.barLength() / 4));
   });
 
+  /** Doigté de la partie jouée (null si la voix n'en a pas), aligné sur le pattern des notes. */
+  readonly hands = computed(() => {
+    const inst = this.instrument();
+    if (!showsHands(inst) || this.motif() === 'temps') return null;
+    return handsFor(inst.voice, this.pattern(), inst.hands);
+  });
+
   readonly notes = computed(() => {
     const now = this.phase() === 'ready' ? this.startTime() : this.now();
+    const hands = this.hands();
     return this.targets()
       .filter((t) => t.time - now < 2.4 && now - t.time < 0.45)
       .map((t) => {
@@ -242,6 +252,7 @@ export class GamePage implements OnDestroy {
           id: t.id,
           state: t.state,
           accent: t.vel === 3,
+          hand: hands ? hands[t.step % hands.length] : '',
           y: HIT_LINE + (t.time - now) * SPEED,
           opacity: fading ? Math.max(0, 1 - age / 0.3) : 1,
         };

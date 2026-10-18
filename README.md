@@ -67,6 +67,7 @@ app/src/app/
     rhythms.ts               Chargement, vérification et tri du JSON
     exercises.ts             Catalogue des exercices
     types.ts                 Types et parseur de patterns
+    hands.ts                 Doigté D/G : notation, doigté par défaut par voix, affichage
   state/settings.service.ts  Réglages persistés (localStorage)
   shared/                    Icônes SVG, en-tête, bouton lecture, contrôle de tempo, grilles
 ```
@@ -103,5 +104,7 @@ caixa : 'XooX ooXo ooXo Xooo'
 Un pattern peut couvrir plusieurs mesures : 32 caractères pour une phrase de 2 mesures, 64 pour 4 (le `|` entre les mesures est décoratif). Il boucle sur sa propre longueur pendant que les patterns d'une mesure se répètent dessous, et toutes les phrases repartent de leur première mesure après un break. La grille du lecteur affiche la mesure en cours avec un repère « 1/2 », « 2/2 », et la décomposition d'un instrument montre toutes les mesures de sa phrase.
 
 Un break est une liste de mesures ; chaque mesure indique le pattern de chaque instrument qui joue, les autres se taisent. Les patterns livrés sont indicatifs : remplace-les par ceux de ta batucada.
+
+Le doigté (main droite / main gauche) s'affiche sur la décomposition, dans l'éditeur et sur les notes de « Suis le rythme » pour les instruments où il a un sens (caixa, repique, alfaia, timbal, surdos). Un instrument ou une variation peut le préciser avec `hands`, une lettre par case parallèle au pattern (`D`, `G`, `.` = non précisé) ; les cases non précisées prennent le doigté par défaut de la voix (`data/hands.ts`) : mains alternées pour caixa, alfaia et timbal, baguette sur les accents et main sur le reste pour le repique, mailloche sur les frappes et main sur les coups doux pour les surdos. Dans l'éditeur, toucher la lettre sous une case la fait tourner (défaut → D → G).
 
 Pour remplacer un son synthétisé par un vrai sample, il suffit de changer la voix correspondante dans `app/src/app/audio/synth.ts` (le séquenceur ne connaît que des identifiants de voix).

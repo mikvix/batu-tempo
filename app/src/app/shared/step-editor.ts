@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
+import { Hand } from '../data/hands';
 import { STEPS_PER_BAR, Velocity } from '../data/types';
 
 /** Ordre de rotation au toucher : silence → frappe → accent → ghost → silence. */
@@ -36,6 +37,21 @@ const LABEL: Record<Velocity, string> = { 0: 'silence', 1: 'ghost', 2: 'frappe',
                   (click)="toggle(cell.i)"></button>
               }
             </div>
+            @if (hands(); as h) {
+              <div class="beat__hands">
+                @for (cell of beat.cells; track cell.i) {
+                  <button
+                    type="button"
+                    class="hand"
+                    [class.hand--set]="h[cell.i]?.explicit"
+                    [disabled]="cell.v === 0"
+                    [attr.aria-label]="'Main, mesure ' + (bar.index + 1) + ', temps ' + (beat.index + 1) + ', case ' + ((cell.i % 4) + 1) + ' : ' + handLabel(h[cell.i])"
+                    (click)="handToggle.emit(cell.i)">
+                    {{ cell.v === 0 ? '' : h[cell.i]?.hand || '·' }}
+                  </button>
+                }
+              </div>
+            }
           </div>
         }
       </div>
@@ -59,6 +75,12 @@ const LABEL: Record<Velocity, string> = { 0: 'silence', 1: 'ghost', 2: 'frappe',
       border-radius: 50%; background: var(--bg); }
     .cell--ghost { background: transparent; border: 2px dashed var(--c); }
     .cell--now { outline: 2px solid var(--text); outline-offset: 1px; }
+    .beat__hands { display: flex; gap: 4px; }
+    .hand { flex: 1 1 0; height: 22px; border-radius: 6px; background: transparent; border: 1px dashed transparent; color: var(--muted);
+      font-size: 12px; font-weight: 700; padding: 0; }
+    .hand:not(:disabled) { border-color: var(--border); }
+    .hand--set { color: var(--text); border-style: solid; }
+    .hand:disabled { opacity: 0.35; }
   `,
 })
 export class StepEditor {
@@ -72,6 +94,13 @@ export class StepEditor {
    * rapprochées ne s'écrasent pas, même si l'affichage n'a pas encore été rafraîchi entre les deux.
    */
   readonly cellToggle = output<number>();
+  /**
+   * Doigté affiché sous les cases (null = pas de doigté pour cet instrument) : lettre effective et
+   * si elle a été choisie explicitement (sinon c'est le doigté par défaut de la voix).
+   */
+  readonly hands = input<{ hand: Hand; explicit: boolean }[] | null>(null);
+  /** Index de la case dont on veut changer la main (rotation : auto → D → G → auto). */
+  readonly handToggle = output<number>();
 
   readonly bars = computed(() => {
     const cells = this.cells();
@@ -94,5 +123,10 @@ export class StepEditor {
 
   label(v: Velocity): string {
     return LABEL[v];
+  }
+
+  handLabel(h: { hand: Hand; explicit: boolean } | undefined): string {
+    if (!h || !h.hand) return 'non précisée';
+    return (h.hand === 'D' ? 'droite' : 'gauche') + (h.explicit ? '' : ' (par défaut)');
   }
 }

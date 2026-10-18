@@ -1,3 +1,4 @@
+import { Hand, handsToString, parseHands, showsHands } from './hands';
 import { VOICES } from './rhythms';
 import { BreakDef, InstrumentDef, parsePattern, PatternVariation, RhythmDef, STEPS_PER_BAR, Velocity, VoiceId } from './types';
 
@@ -18,7 +19,6 @@ export const INSTRUMENT_PRESETS: { voice: VoiceId; name: string; short: string; 
   { voice: 'pandeiro', name: 'Pandeiro', short: 'PD', role: 'tapis' },
 ];
 
-const HAND_VOICES = new Set<VoiceId>(['caixa', 'repique']);
 const MAX_BARS = 4;
 const MAX_INSTRUMENTS = 16;
 
@@ -92,6 +92,15 @@ function cleanPattern(v: unknown, maxBars: number): string | null {
   return toPattern(cells);
 }
 
+/** Doigté nettoyé, ramené à la longueur du pattern ; null s'il ne précise rien. */
+function cleanHands(v: unknown, pattern: string): string | null {
+  if (typeof v !== 'string') return null;
+  const len = parsePattern(pattern).length;
+  const hands: Hand[] = parseHands(v).slice(0, len);
+  while (hands.length < len) hands.push('');
+  return hands.some((h) => h !== '') ? handsToString(hands) : null;
+}
+
 /**
  * Valide et normalise un rythme venu de l'extérieur (lien partagé, stockage local).
  * Renvoie null si l'objet est inutilisable. Les rythmes personnels ont toujours un id « perso-… ».
@@ -129,8 +138,10 @@ export function sanitizeRhythm(raw: unknown): RhythmDef | null {
       const varPattern = cleanPattern(v['pattern'], MAX_BARS);
       const varName = str(v['name'], 40);
       if (!varPattern || !varName) continue;
-      variations.push({ id: slugify(str(v['id'], 30) || varName), name: varName, pattern: varPattern });
+      const varHands = cleanHands(v['hands'], varPattern);
+      variations.push({ id: slugify(str(v['id'], 30) || varName), name: varName, pattern: varPattern, hands: varHands ?? undefined });
     }
+    const hands = cleanHands(i['hands'], pattern) ?? undefined;
     instruments.push({
       id: instId,
       name: instName,
@@ -138,7 +149,8 @@ export function sanitizeRhythm(raw: unknown): RhythmDef | null {
       role: str(i['role'], 30),
       voice,
       pattern,
-      showHands: HAND_VOICES.has(voice) || i['showHands'] === true,
+      hands,
+      showHands: showsHands({ voice, hands, showHands: i['showHands'] === true }),
       variations: variations.length ? variations : undefined,
     });
   }
@@ -200,7 +212,10 @@ export function minifyRhythm(r: RhythmDef): unknown {
       role: i.role || undefined,
       voice: i.voice,
       pattern: compact(i.pattern),
-      variations: i.variations?.length ? i.variations.map((v) => ({ id: v.id, name: v.name, pattern: compact(v.pattern) })) : undefined,
+      hands: i.hands ? compact(i.hands) : undefined,
+      variations: i.variations?.length
+        ? i.variations.map((v) => ({ id: v.id, name: v.name, pattern: compact(v.pattern), hands: v.hands ? compact(v.hands) : undefined }))
+        : undefined,
     })),
     breaks: r.breaks.map((b) => ({
       id: b.id,

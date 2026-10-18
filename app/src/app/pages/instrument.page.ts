@@ -5,6 +5,7 @@ import { buildBarSpec, PlayerService } from '../audio/player.service';
 import { getInstrument, grooveBar } from '../data/rhythms';
 import { RhythmLibrary } from '../state/rhythm-library.service';
 import { barsOf, barSlice, parsePattern, Velocity } from '../data/types';
+import { handsFor, showsHands } from '../data/hands';
 import { Icon } from '../shared/icon';
 import { TempoControl } from '../shared/tempo-control';
 import { Header, PlayButton } from '../shared/ui';
@@ -13,16 +14,6 @@ import { SettingsService } from '../state/settings.service';
 type Mode = 'solo' | 'group' | 'full';
 
 const SPEEDS = [50, 70, 85, 100];
-
-function hands(pattern: Velocity[]): string[] {
-  let right = true;
-  return pattern.map((v) => {
-    if (v === 0) return '';
-    const h = right ? 'D' : 'G';
-    right = !right;
-    return h;
-  });
-}
 
 @Component({
   selector: 'app-instrument-page',
@@ -71,7 +62,7 @@ function hands(pattern: Velocity[]): string[] {
             </div>
           }
           <div class="row row--between muted small" style="border-top: 1px solid var(--border-soft); padding-top: 10px">
-            <span>{{ instrument().showHands ? 'D = main droite · G = main gauche' : '• = frappe' }}</span>
+            <span>{{ showsHands(instrument()) ? 'D = main droite · G = main gauche' : '• = frappe' }}</span>
             <span>{{ instrument().role }}</span>
           </div>
         </div>
@@ -156,13 +147,18 @@ export class InstrumentPage {
   readonly bars = computed(() => barsOf(this.pattern()));
   /** Une ligne de grille par mesure du pattern, avec le doigté continu sur toute la phrase. */
   readonly rows = computed(() => {
-    const allHands = this.instrument().showHands ? hands(this.pattern()) : null;
+    const inst = this.instrument();
+    const variation = this.variation();
+    // Doigté de la variation si elle en précise un, sinon celui de l'instrument (grille de base).
+    const explicit = variation.hands ?? (variation.pattern === inst.pattern ? inst.hands : undefined);
+    const allHands = showsHands(inst) ? handsFor(inst.voice, this.pattern(), explicit) : null;
     return Array.from({ length: this.bars() }, (_, bar) => ({
       bar,
       cells: barSlice(this.pattern(), bar),
       hands: allHands ? allHands.slice(bar * 16, bar * 16 + 16) : null,
     }));
   });
+  readonly showsHands = showsHands;
   readonly targetBpm = computed(() => Math.round((this.rhythmDef().bpm * this.speed()) / 100));
   readonly step = computed(() => (this.player.playing() ? this.player.step() : -1));
   /** Mesure du pattern en cours de lecture. */
